@@ -1,5 +1,12 @@
-const domain = process.env.SHOPIFY_STORE_DOMAIN!;
-const token  = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!;
+const domain = process.env.SHOPIFY_STORE_DOMAIN;
+const token  = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
+
+if (!domain || !token) {
+  throw new Error(
+    'Missing Shopify environment variables. Please set SHOPIFY_STORE_DOMAIN and SHOPIFY_STOREFRONT_ACCESS_TOKEN.'
+  );
+}
+
 const apiUrl = `https://${domain}/api/2024-01/graphql.json`;
 
 export async function shopifyFetch<T>({
@@ -15,7 +22,7 @@ export async function shopifyFetch<T>({
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': token,
+      'X-Shopify-Storefront-Access-Token': token!,
     },
     body: JSON.stringify({ query, variables }),
     next: { revalidate: 60 }, // ISR — revalidate every 60s
