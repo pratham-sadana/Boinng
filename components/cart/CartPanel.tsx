@@ -4,8 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useState } from 'react';
 import { useCart } from '@/lib/cart/context';
-import { shopifyFetch } from '@/lib/shopify/client';
-import { CREATE_CART } from '@/lib/shopify/queries';
 
 export function CartPanel() {
   const { isOpen, closeCart, items, removeItem } = useCart();
@@ -16,28 +14,34 @@ export function CartPanel() {
     
     setIsCheckingOut(true);
     try {
-      // Create cart with all items
-      const response = await shopifyFetch<any>({
-        query: CREATE_CART,
-        variables: {
-          input: {
-            lines: items.map(item => ({
-              merchandiseId: item.id,
-              quantity: item.quantity,
-            })),
-          },
-        },
+      // Call server-side API to create checkout
+      const response = await fetch('/api/cart/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lines: items.map(item => ({
+            merchandiseId: item.id,
+            quantity: item.quantity,
+          })),
+        }),
       });
 
-      if (response?.cartCreate?.cart?.checkoutUrl) {
-        window.location.href = response.cartCreate.cart.checkoutUrl;
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create checkout');
+      }
+
+      const data = await response.json();
+
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
       } else {
-        console.error('❌ No checkout URL in response:', response);
+        console.error('❌ No checkout URL in response:', data);
         alert('Error creating checkout. Please try again.');
       }
     } catch (error) {
       console.error('❌ Checkout error:', error);
-      alert('Error creating checkout. Please try again.');
+      alert(error instanceof Error ? error.message : 'Error creating checkout. Please try again.');
     } finally {
       setIsCheckingOut(false);
     }
@@ -106,7 +110,7 @@ export function CartPanel() {
                 disabled={items.length === 0 || isCheckingOut}
                 className="block w-full bg-boinng-blue text-white text-center py-4 rounded-full font-bold uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
               >
-                {isCheckingOut ? 'Processing...' : 'Checkout on Shopify'}
+                {isCheckingOut ? 'Processing...' : 'Checkout'}
               </button>
             </div>
           </motion.div>
