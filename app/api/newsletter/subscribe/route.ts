@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { sendNewsletterWelcomeEmail } from '@/lib/email/service';
 
 /**
  * Newsletter subscription endpoint
@@ -11,90 +12,116 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 
 export async function POST(request: NextRequest) {
-  const { email } = await request.json();
-
-  // Validate email
-  if (!email || !email.includes('@')) {
-    return NextResponse.json(
-      { error: 'Invalid email address' },
-      { status: 400 }
-    );
-  }
-
+  let email = '';
+  
   try {
-    // Option 1: Send to Resend (email service)
-    // Uncomment to use Resend: npm install resend
-    /*
-    const { Resend } = require('resend');
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    
-    await resend.emails.send({
-      from: 'noreply@boinng.in',
-      to: email,
-      subject: '🎉 Welcome to BOINNG! Club',
-      html: '<h1>You\'re in the club!</h1><p>Expect early access, exclusive drops, and special offers.</p>',
-    });
-    */
+    const body = await request.json();
+    email = body.email;
 
-    // Option 2: Send to Mailchimp
-    // Uncomment to use Mailchimp: npm install @mailchimp/mailchimp_marketing
-    /*
-    const mailchimp = require("@mailchimp/mailchimp_marketing");
-    mailchimp.setConfig({
-      apiKey: process.env.MAILCHIMP_API_KEY,
-      server: process.env.MAILCHIMP_SERVER_PREFIX, // e.g., "us1"
-    });
-    
-    await mailchimp.lists.addListMember(process.env.MAILCHIMP_LIST_ID, {
-      email_address: email,
-      status: 'pending',
-    });
-    */
-
-    // Option 3: Send to Klaviyo (recommended for e-commerce)
-    // Uncomment to use Klaviyo: npm install axios
-    /*
-    const axios = require('axios');
-    
-    const klaviyoResponse = await axios.post(
-      'https://a.klaviyo.com/api/v2/list/MAILLIST_ID/subscribe',
-      {
-        api_key: process.env.KLAVIYO_API_KEY,
-        profiles: [
-          {
-            email: email,
-            subscribed: true,
-          },
-        ],
-      }
-    );
-
-    if (klaviyoResponse.status !== 200) {
-      throw new Error('Klaviyo subscription failed');
+    // Validate email
+    if (!email || typeof email !== 'string') {
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Email is required',
+        },
+        { status: 400 }
+      );
     }
-    */
 
-    // For now: Store email locally (for demo purposes)
-    // In production, use one of the services above
-    console.log(`✅ Newsletter signup: ${email}`);
+    const trimmedEmail = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!emailRegex.test(trimmedEmail)) {
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Invalid email address',
+        },
+        { status: 400 }
+      );
+    }
 
-    // Log to console for development
+    console.log(`[/api/newsletter/subscribe] Processing email: ${trimmedEmail}`);
+
+    // Create customer in Shopify with marketing consent
+    const customerData = {
+      email: email.toLowerCase().trim(),
+      acceptsMarketing: true,
+    };
+
+    console.log(`📧 Creating customer for newsletter: ${email}`);
+
+    let customerCreated = false;
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+      const customerResponse = await fetch(
+        `${baseUrl}/api/customers/create`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(customerData),
+        }
+      );
+
+      // Check response status first
+      if (!customerResponse.ok) {
+        const responseText = await customerResponse.text();
+        console.error(`⚠️ Customer creation failed with status ${customerResponse.status}:`, responseText.substring(0, 200));
+      } else {
+        const result = await customerResponse.json();
+
+        if (result.success) {
+          console.log(`✅ Customer created: ${result.customer.id}`);
+          customerCreated = true;
+        } else {
+          console.warn(`⚠️ Customer creation skipped: ${result.message}`);
+        }
+      }
+    } catch (customerError) {
+      console.error(`❌ Customer creation error:`, customerError);
+      // Continue with email even if customer creation fails
+    }
+
+    // Optional: Send welcome email via email service
+    if (process.env.RESEND_API_KEY) {
+      console.log(`📬 Attempting to send welcome email to: ${email}`);
+      const emailResult = await sendNewsletterWelcomeEmail(email);
+      
+      if (!emailResult.success) {
+        console.error(`❌ Email send failed: ${emailResult.error}`);
+        // Don't fail subscription if email fails (it's optional)
+      }
+    } else {
+      console.log(`⚠️ RESEND_API_KEY not configured. Skipping email send.`);
+    }
+
     console.log(`[Newsletter Signup] Email: ${email}, Time: ${new Date().toISOString()}`);
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Successfully subscribed to newsletter',
+        message: 'Successfully subscribed to newsletter! Check your email for updates.',
         email,
+        customerCreated,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error('Newsletter subscription error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorStack = error instanceof Error ? error.stack : '';
+    
+    console.error('[/api/newsletter/subscribe] Error:', {
+      message: errorMessage,
+      stack: errorStack,
+      email,
+    });
+
     return NextResponse.json(
       {
+        success: false,
         error: 'Failed to subscribe. Please try again later.',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        details: errorMessage,
       },
       { status: 500 }
     );
