@@ -2,131 +2,142 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { ArrowRight, ChevronLeft } from 'lucide-react';
+import { motion, useInView } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
+import { useRef } from 'react';
 import type { CollectionPreview } from '@/lib/shopify/types';
+
+// Collections to hide from the public listing
+const HIDDEN_HANDLES = ['sale', 'hidden', 'test'];
 
 interface AllCollectionsClientProps {
   collections: CollectionPreview[];
 }
 
 export function AllCollectionsClient({ collections }: AllCollectionsClientProps) {
-  return (
-    <div className="min-h-screen pt-8 pb-24">
-      {/* Hero Section */}
-      <div className="px-4 md:px-8 max-w-7xl mx-auto mb-16">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-boinng-blue font-bold uppercase tracking-widest mb-8 hover:gap-3 transition-all"
-        >
-          <ChevronLeft size={20} />
-          Back
-        </Link>
+  const ref    = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
 
+  const visible = collections.filter(
+    (c) => !HIDDEN_HANDLES.includes(c.handle.toLowerCase())
+  );
+
+  return (
+    <main className="bg-[#FFFEFA] min-h-screen">
+
+      {/* Hero */}
+      <section className="bg-boinng-black pt-16 pb-14 px-4 text-center relative overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '24px 24px' }}
+        />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-12"
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="relative"
         >
-          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl uppercase tracking-widest font-bold mb-4 leading-tight">
+          <p className="text-boinng-blue text-[10px] font-black tracking-[0.35em] uppercase mb-4">
+            Browse everything
+          </p>
+          <h1 className="font-display text-[clamp(2.5rem,8vw,5.5rem)] uppercase tracking-widest text-white leading-tight mb-3">
             All Collections
           </h1>
-          <p className="text-xl text-black/60 max-w-2xl">
-            Explore all of BOINNG!'s premium streetwear collections. From bold basics to limited drops, find your next favorite piece.
+          <p className="text-white/45 text-sm max-w-sm mx-auto leading-relaxed">
+            Every drop, every theme, every excuse to wear wild socks.
           </p>
         </motion.div>
-      </div>
+      </section>
 
-      {/* Collections Grid */}
-      {collections.length > 0 ? (
-        <div className="px-4 md:px-8 max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ staggerChildren: 0.05, delayChildren: 0.1 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-          >
-            {collections.map((collection, index) => (
+      {/* Grid */}
+      <section ref={ref} className="max-w-[1400px] mx-auto px-4 md:px-10 py-14 md:py-20">
+        {visible.length === 0 ? (
+          <p className="text-center text-black/40 font-bold tracking-widest uppercase text-sm py-20">
+            No collections found.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+            {visible.map((collection, index) => (
               <CollectionCard
                 key={collection.handle}
                 collection={collection}
                 index={index}
+                inView={inView}
               />
             ))}
-          </motion.div>
-        </div>
-      ) : (
-        <div className="px-4 md:px-8 max-w-7xl mx-auto py-24 text-center">
-          <p className="text-xl text-black/60">No collections found.</p>
-        </div>
-      )}
-    </div>
+          </div>
+        )}
+      </section>
+    </main>
   );
 }
 
 function CollectionCard({
   collection,
   index,
+  inView,
 }: {
   collection: CollectionPreview;
   index: number;
+  inView: boolean;
 }) {
   const productCount = collection.products?.edges?.length || 0;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.05 }}
-      className="group"
+      initial={{ opacity: 0, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ delay: index * 0.06, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
     >
-      <Link href={`/collections/${collection.handle}`}>
-        <div className="relative rounded-2xl overflow-hidden bg-black/5 border border-black/[0.07] transition-all duration-300 hover:shadow-xl hover:shadow-black/10 hover:-translate-y-1 cursor-pointer h-full flex flex-col">
-          {/* Image Container */}
+      <Link href={`/collections/${collection.handle}`} className="block h-full">
+        <div className="group relative rounded-2xl overflow-hidden cursor-pointer h-full min-h-[200px] md:min-h-[280px]">
+
+          {/* Background image or fallback gradient */}
           {collection.image ? (
-            <div className="relative aspect-[4/3] overflow-hidden bg-black/[0.03]">
-              <Image
-                src={collection.image.url}
-                alt={collection.image.altText || collection.title}
-                fill
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
-            </div>
+            <Image
+              src={collection.image.url}
+              alt={collection.image.altText || collection.title}
+              fill
+              className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06]"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 33vw"
+            />
           ) : (
-            <div className="aspect-[4/3] bg-gradient-to-br from-boinng-blue/20 to-boinng-blue/5 flex items-center justify-center">
-              <span className="text-boinng-blue/50 text-center px-4">No Image</span>
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-br from-boinng-blue/30 to-boinng-blue/10" />
           )}
 
-          {/* Content Container */}
-          <div className="flex-1 p-6 flex flex-col justify-between">
-            <div>
-              <h3 className="font-display text-2xl lg:text-3xl uppercase tracking-wider font-bold mb-2 group-hover:text-boinng-blue transition-colors line-clamp-2">
-                {collection.title}
-              </h3>
-              {collection.description && (
-                <p className="text-black/60 text-sm leading-relaxed line-clamp-2">
-                  {collection.description}
-                </p>
-              )}
-            </div>
+          {/* Permanent dark gradient for legibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
 
-            {/* Product Count Badge */}
-            {productCount > 0 && (
-              <div className="mt-4 pt-4 border-t border-black/10">
-                <span className="inline-block text-xs font-bold uppercase tracking-widest text-boinng-blue">
-                  {productCount} Product{productCount !== 1 ? 's' : ''}
-                </span>
-              </div>
+          {/* Hover darkening */}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500" />
+
+          {/* Info overlay */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+            <h3 className="font-display text-sm md:text-lg lg:text-xl uppercase tracking-widest font-bold text-white leading-tight line-clamp-2 mb-1">
+              {collection.title}
+            </h3>
+
+            {collection.description && (
+              <p className="text-white/55 text-[10px] md:text-xs leading-relaxed line-clamp-2 hidden md:block">
+                {collection.description}
+              </p>
             )}
+
+            <div className="flex items-center justify-between mt-2">
+              {productCount > 0 && (
+                <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white/45">
+                  {productCount} item{productCount !== 1 ? 's' : ''}
+                </span>
+              )}
+              <span className="ml-auto flex items-center gap-1 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white/50 group-hover:text-white transition-colors duration-300">
+                Shop
+                <ArrowRight size={10} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+              </span>
+            </div>
           </div>
 
-          {/* Overlay Arrow */}
-          <div className="absolute bottom-4 right-4 bg-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
-            <ArrowRight size={20} className="text-boinng-blue" />
-          </div>
+          {/* Border glow on hover */}
+          <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-white/20 transition-all duration-500 pointer-events-none" />
         </div>
       </Link>
     </motion.div>

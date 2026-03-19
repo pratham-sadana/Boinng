@@ -3,16 +3,19 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { label } from 'framer-motion/client';
 
 const LINKS = {
   COLLECTIONS: [
-    { label: 'Shop All Products', href: '/shop' },
+    { label: 'All Products', href: '/shop' },
     { label: 'All Collections', href: '/collections' },
     { label: 'New Arrivals', href: '/collections/new-arrivals' },
     { label: 'Best Sellers', href: '/collections/best-sellers' },
     { label: 'Sale', href: '/collections/sale' },
   ],
   INFORMATION: [
+    { label: 'About Us', href: '/pages/about' },
+    {label: 'FAQs', href: '/pages/faqs' },
     { label: 'Contact Us', href: '/pages/contact' },
     { label: 'Returns & Refunds', href: '/pages/returns' },
     { label: 'Shipping Info', href: '/pages/shipping' },
@@ -90,7 +93,7 @@ export function Footer() {
 
             {/* Tagline */}
             <p className="text-sm leading-relaxed text-[#FFFEFA]/50 font-medium max-w-xs">
-              Streetwear for the bold. Drops every Friday. Free shipping over ₹799.
+              Streetwear for the bold. Limited drops, exclusive collabs, and a community that dares to be different.
             </p>
 
             {/* Instagram */}

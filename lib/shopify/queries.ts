@@ -45,6 +45,22 @@ export const COLLECTION_QUERY = `
 `;
 
 // ─── Single Product (PDP) ────────────────────────────────────────────────────
+// ─── Single Product (PDP) ────────────────────────────────────────────────────
+// Fetches metafields from both "custom" namespace (user-created)
+// and "descriptors" namespace (Shopify built-in product metafields).
+// If fields still don't appear, check Shopify Admin → Settings → Custom Data
+// and verify the exact namespace + key for each metafield.
+
+// Shopify category metafields (fabric, activity etc.) are stored as
+// metaobject references — the `value` field returns a raw GID string.
+// Adding `reference { ... on Metaobject { fields { key value } } }`
+// resolves the GID inline so you get actual data back.
+ 
+// Replace PRODUCT_QUERY in queries.ts with this.
+// Shopify category metafields (fabric, activity etc.) are stored as
+// metaobject references — the `value` field returns a raw GID string.
+// Adding `reference { ... on Metaobject { fields { key value } } }`
+// resolves the GID inline so you get actual data back.
 
 export const PRODUCT_QUERY = `
   query Product($handle: String!) {
@@ -56,6 +72,13 @@ export const PRODUCT_QUERY = `
       availableForSale
       tags
       options { name values }
+      priceRange {
+        minVariantPrice { amount currencyCode }
+      }
+      compareAtPriceRange {
+        minVariantPrice { amount currencyCode }
+      }
+      featuredImage { url altText width height }
       variants(first: 100) {
         edges {
           node {
@@ -73,15 +96,40 @@ export const PRODUCT_QUERY = `
         edges { node { url altText width height } }
       }
       metafields(identifiers: [
-        { namespace: "custom",      key: "size_guide" }
-        { namespace: "descriptors", key: "care_guide" }
+        { namespace: "shopify", key: "fabric" }
+        { namespace: "shopify", key: "activity" }
+        { namespace: "shopify", key: "accessory-size" }
+        { namespace: "shopify", key: "clothing-features" }
+        { namespace: "shopify", key: "target-gender" }
+        { namespace: "shopify", key: "color-pattern" }
       ]) {
-        key namespace value
+        key
+        namespace
+        value
+        type
+        reference {
+          ... on Metaobject {
+            fields {
+              key
+              value
+            }
+          }
+        }
+        references(first: 10) {
+          nodes {
+            ... on Metaobject {
+              fields {
+                key
+                value
+              }
+            }
+          }
+        }
       }
     }
   }
 `;
-
+ 
 // ─── Featured Products (Homepage) ───────────────────────────────────────────
 
 export const FEATURED_PRODUCTS_QUERY = `

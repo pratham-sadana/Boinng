@@ -1,52 +1,60 @@
+import dynamic from 'next/dynamic';
 import { Hero }             from '@/components/home/Hero';
 import { Marquee }          from '@/components/layout/Marquee';
-import { Features }         from '@/components/home/Features';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
 import { FeaturedCollections } from '@/components/home/FeaturedCollections';
-import { Testimonials }     from '@/components/home/Testimonials';
-import { InstagramFeed }    from '@/components/home/InstagramFeed';
-import { FinalCTA }         from '@/components/home/FinalCTA';
 
+// Lazy-load below-the-fold sections for faster initial load
+const Features      = dynamic(() => import('@/components/home/Features').then(m => ({ default: m.Features })));
+const BrandStory    = dynamic(() => import('@/components/home/BrandStory').then(m => ({ default: m.BrandStory })));
+const Testimonials  = dynamic(() => import('@/components/home/Testimonials').then(m => ({ default: m.Testimonials })));
+const InstagramFeed = dynamic(() => import('@/components/home/InstagramFeed').then(m => ({ default: m.InstagramFeed })));
+const FinalCTA      = dynamic(() => import('@/components/home/FinalCTA').then(m => ({ default: m.FinalCTA })));
 
 export default function HomePage() {
   return (
     <>
-      {/* Scroll-scrubbing video hero — 300vh scroll section */}
+      {/* 1. Hero — first impression, scroll-scrub video */}
       <Hero />
 
-      {/* Ticker marquee after hero */}
-      <Marquee speed={130}/>
+      {/* 2. Energy burst immediately after hero — keeps momentum */}
+      <Marquee speed={130} />
 
-      {/* Featured products — Best Sellers */}
-      <FeaturedProducts 
-        title="BEST SELLERS" 
+      {/* 3. Best Sellers — product discovery #1 priority, hottest items first */}
+      <FeaturedProducts
+        title="BEST SELLERS"
         collectionHandle="best-sellers"
-        limit={4}
+        limit={8}
       />
 
-      {/* Featured products — New Arrivals */}
-      <FeaturedProducts 
-        title="NEW ARRIVALS" 
-        collectionHandle="new-arrivals"
-        limit={4}
-      />
-
-      {/* Featured Collections */}
+      {/* 4. Collections — let users self-select their category */}
       <FeaturedCollections limit={6} />
 
-      {/* Why BOINNG! feature grid */}
+      {/* 5. New Arrivals — reward browsers who kept scrolling */}
+      <FeaturedProducts
+        title="NEW ARRIVALS"
+        collectionHandle="new-arrivals"
+        limit={8}
+      />
+
+      {/* 6. Why BOINNG! — builds trust before asking for the sale */}
       <Features />
 
-      {/* Mid-page marquee in dark variant */}
-      <Marquee speed={20} dark items={['ONLY THE BOLD','LIMITED DROPS','INDIA\'S OWN','MAKE IT BOINNG!','STREETWEAR FIRST']} />
+      {/* 7. Brand story — who we are, why it matters */}
+      <BrandStory />
 
-      {/* Instagram Feed - Social Proof */}
+      {/* 8. Dark marquee — palette break, keeps energy up */}
+      <Marquee
+        speed={20}
+        white
+        items={["ONLY THE BOLD", "LIMITED DROPS", "INDIA'S OWN", "MAKE IT BOINNG!", "STREETWEAR FIRST"]}
+      />
+
+      {/* 9. Social proof — Instagram + testimonials together for max credibility */}
       <InstagramFeed />
-
-      {/* Social proof */}
       <Testimonials />
 
-      {/* Final CTA before footer */}
+      {/* 10. Final CTA — capture intent at the very end */}
       <FinalCTA />
     </>
   );

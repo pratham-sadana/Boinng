@@ -15,10 +15,10 @@ interface NavLink {
 }
 
 const FALLBACK_NAV_LINKS: NavLink[] = [
-  { label: 'Shop All',     href: '/shop' },
-  { label: 'Collections',  href: '/collections' },
+  { label: 'fallback',    href: '/collections/christmas' },
+  { label: 'not working', href: '/collections/new-arrivals' },
   { label: 'Sale',         href: '/collections/sale' },
-  { label: 'New Arrivals', href: '/collections/new-arrivals' },
+  { label: 'Valentines',   href: '/collections/valentines' },
 ];
 
 const FALLBACK_ANNOUNCEMENTS = [
@@ -152,6 +152,37 @@ export function Navbar() {
 
           {/* Desktop nav */}
           <ul className="hidden md:flex items-center gap-1" role="list">
+
+            {/* Permanent links — always visible */}
+            {[
+              { label: 'All',       href: '/shop' },
+              { label: 'Collections', href: '/collections' },
+            ].map((l) => (
+              <li key={l.href}>
+                <Link
+                  href={l.href}
+                  onClick={handleNavigation}
+                  onMouseEnter={() => setActiveLink(l.href)}
+                  onMouseLeave={() => setActiveLink(null)}
+                  className="relative px-4 py-2 text-xs font-bold tracking-[0.18em] text-boinng-blue uppercase hover:text-boinng-blue/70 transition-colors duration-200 flex items-center gap-1.5"
+                >
+                  {l.label}
+                  <motion.span
+                    className="absolute bottom-0 left-4 right-4 h-[2px] bg-boinng-blue rounded-full origin-left"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: activeLink === l.href ? 1 : 0 }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                  />
+                </Link>
+              </li>
+            ))}
+
+            {/* Divider */}
+            {navLinks.length > 0 && (
+              <li aria-hidden="true" className="w-px h-4 bg-black/10 mx-1" />
+            )}
+
+            {/* Dynamic Shopify menu links */}
             {navLinks.map((l) => (
               <li key={l.href}>
                 <Link

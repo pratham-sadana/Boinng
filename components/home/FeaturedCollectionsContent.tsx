@@ -7,6 +7,8 @@ import { ArrowRight } from 'lucide-react';
 import { useRef } from 'react';
 import type { CollectionPreview } from '@/lib/shopify/types';
 
+const HIDDEN_HANDLES = ['sale', 'hidden', 'test'];
+
 interface FeaturedCollectionsContentProps {
   title?: string;
   collections: CollectionPreview[];
@@ -19,7 +21,12 @@ export function FeaturedCollectionsContent({
   const ref    = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
 
-  if (!collections || collections.length === 0) return null;
+  const HIDDEN_HANDLES = ['sale', 'hidden', 'test'];
+  const visible = collections.filter(
+    (c) => !HIDDEN_HANDLES.includes(c.handle.toLowerCase())
+  );
+
+  if (visible.length === 0) return null;
 
   return (
     <section ref={ref} className="py-10 md:py-14 bg-[#FFFEFA] overflow-hidden">
@@ -46,7 +53,7 @@ export function FeaturedCollectionsContent({
 
         {/* Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-          {collections.map((collection, index) => (
+          {visible.map((collection, index) => (
             <CollectionCard key={collection.handle} collection={collection} index={index} inView={inView} />
           ))}
         </div>
@@ -117,7 +124,7 @@ function CollectionCard({
                   {productCount} item{productCount !== 1 ? 's' : ''}
                 </span>
               )}
-              <span className="ml-auto flex items-center gap-1 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white/50 group-hover:text-white transition-colors duration-300">
+              <span className="ml-auto flex items-center gap-1 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-boinng-blue group-hover:text-white transition-colors duration-300">
                 Shop
                 <ArrowRight size={10} className="transition-transform duration-300 group-hover:translate-x-0.5" />
               </span>

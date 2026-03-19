@@ -87,7 +87,7 @@ export function CartPanel() {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed top-0 right-0 h-full w-full max-w-md bg-boinng-bg z-50 shadow-2xl flex flex-col"
+            className="fixed top-0 right-0 h-full w-full max-w-md bg-boinng-bg z-50 sm:z-50 shadow-2xl flex flex-col"
           >
             <div className="flex items-center justify-between p-6 border-b border-black/10">
               <h2 className="font-display text-2xl uppercase tracking-widest">Your Cart ({items.length})</h2>

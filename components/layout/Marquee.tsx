@@ -8,8 +8,8 @@ import {
 
 const DEFAULT = ['NEW DROPS EVERY FRIDAY', 'FREE SHIPPING OVER ₹799', 'LIMITED EDITION ONLY', 'STREETWEAR FOR THE BOLD', 'MADE IN INDIA'];
 
-export function Marquee({ items = DEFAULT, sep = '✦', dark = false, speed = 80 }: {
-  items?: string[]; sep?: string; dark?: boolean; speed?: number;
+export function Marquee({ items = DEFAULT, sep = '✦', white = false, speed = 80 }: {
+  items?: string[]; sep?: string; white?: boolean; speed?: number;
 }) {
   const [isPaused, setIsPaused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -46,7 +46,7 @@ export function Marquee({ items = DEFAULT, sep = '✦', dark = false, speed = 80
 
   return (
     <motion.div
-      className={`overflow-hidden whitespace-nowrap py-4 border-y border-boinng-black/10 cursor-pointer select-none relative ${dark ? 'bg-boinng-black' : 'bg-boinng-yellow'} ${isPaused ? 'opacity-80' : ''}`}
+      className={`overflow-hidden whitespace-nowrap py-4 border-y border-boinng-black/10 cursor-pointer select-none relative ${white ? 'bg-white' : 'bg-boinng-yellow'} ${isPaused ? 'opacity-80' : ''}`}
       onClick={() => setIsPaused(!isPaused)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -60,7 +60,7 @@ export function Marquee({ items = DEFAULT, sep = '✦', dark = false, speed = 80
           {items.map((t, i) => (
             <span
               key={i}
-              className={`font-display text-sm md:text-base font-bold tracking-[0.15em] uppercase px-8 flex items-center whitespace-nowrap ${dark ? 'text-[#FFFEFA]' : 'text-boinng-black'} ${isHovered ? 'opacity-70' : 'opacity-100'} transition-all duration-300`}
+              className={`font-display text-sm md:text-base font-bold tracking-[0.15em] uppercase px-8 flex items-center whitespace-nowrap ${white ? 'text-boinng-black' : 'text-boinng-yellow'} ${isHovered ? 'opacity-70' : 'opacity-100'} transition-all duration-300`}
             >
               {t}
               <span className="ml-16 inline-block font-normal opacity-30">{sep}</span>
@@ -73,7 +73,7 @@ export function Marquee({ items = DEFAULT, sep = '✦', dark = false, speed = 80
           {items.map((t, i) => (
             <span
               key={i}
-              className={`font-display text-sm md:text-base font-bold tracking-[0.15em] uppercase px-8 flex items-center whitespace-nowrap ${dark ? 'text-[#FFFEFA]' : 'text-boinng-black'} ${isHovered ? 'opacity-70' : 'opacity-100'} transition-all duration-300`}
+              className={`font-display text-sm md:text-base font-bold tracking-[0.15em] uppercase px-8 flex items-center whitespace-nowrap ${white ? 'text-boinng-black' : 'text-boinng-yellow'} ${isHovered ? 'opacity-70' : 'opacity-100'} transition-all duration-300`}
             >
               {t}
               <span className="ml-16 inline-block font-normal opacity-30">{sep}</span>
@@ -86,7 +86,7 @@ export function Marquee({ items = DEFAULT, sep = '✦', dark = false, speed = 80
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className={`absolute inset-0 flex items-center justify-center text-sm font-bold tracking-widest uppercase ${dark ? 'text-[#FFFEFA]' : 'text-boinng-black'}`}
+          className={`absolute inset-0 flex items-center justify-center text-sm font-bold tracking-widest uppercase ${white ? 'text-boinng-black' : 'text-boinng-yellow'}`}
           style={{ pointerEvents: 'none' }}
         >
           PAUSED

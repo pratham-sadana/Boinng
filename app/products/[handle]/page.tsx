@@ -3,19 +3,13 @@ import { notFound } from 'next/navigation';
 import { ProductDetails } from '@/components/product/ProductDetails';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
 
-// Revalidate product pages every 60 seconds
 export const revalidate = 60;
 
-// Generate metadata for the product page
 export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }) {
   const resolvedParams = await params;
   const product = await getProduct(resolvedParams.handle);
 
-  if (!product) {
-    return {
-      title: 'Product Not Found',
-    };
-  }
+  if (!product) return { title: 'Product Not Found' };
 
   return {
     title: `${product.title} | BOINNG!`,
@@ -36,35 +30,37 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
 
 export default async function ProductPage({ params }: { params: Promise<{ handle: string }> }) {
   const resolvedParams = await params;
+
   let product;
   try {
     product = await getProduct(resolvedParams.handle);
   } catch (error) {
     console.error('ProductPage error:', error);
-    throw error; // Let error boundary handle it
+    throw error;
   }
 
-  if (!product) {
-    notFound();
-  }
+  if (!product) notFound();
 
   const transformedProduct = transformProduct(product);
 
   return (
-    <div className="pt-8 pb-16">
-      <div className="max-w-4xl mx-auto px-4">
+    <main className="bg-[#FFFEFA] min-h-screen">
+
+      {/* Product details */}
+      <div className="max-w-[1400px] mx-auto px-4 md:px-10 pt-10 pb-16">
         <ProductDetails product={transformedProduct} />
       </div>
-      
-      {/* Products You May Like Section */}
-      <div className="mt-24 text-center text-5xl pt-16 border-t font-display border-black/10">
-       Products You May Like
-        <FeaturedProducts 
-        // title="YOU MAY ALSO LIKE"
+
+      {/* You may also like */}
+      <div className="border-t border-black/10">
+        <FeaturedProducts
+          title="YOU MAY ALSO LIKE"
           collectionHandle="best-sellers"
-          limit={4}
+          limit={8}
+          excludeHandle={resolvedParams.handle}
         />
       </div>
-    </div>
+
+    </main>
   );
 }

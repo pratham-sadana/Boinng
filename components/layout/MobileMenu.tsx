@@ -53,6 +53,25 @@ export function MobileMenu({ isOpen, onClose, navLinks }: MobileMenuProps) {
             </button>
 
             <nav className="flex flex-col gap-6">
+              {/* Permanent links */}
+              {[
+                { label: 'All Socks',       href: '/collections/all' },
+                { label: 'All Collections', href: '/collections' },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={handleNavigation}
+                  className="text-2xl font-bold uppercase tracking-widest text-boinng-blue hover:text-boinng-blue/70 transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+              {/* Divider */}
+              {navLinks.length > 0 && <div className="w-8 h-px bg-black/10" />}
+
+              {/* Dynamic Shopify links */}
               {navLinks.map((link) => (
                 <Link
                   key={link.href}

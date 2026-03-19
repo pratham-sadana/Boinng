@@ -35,11 +35,31 @@ export type ProductVariant = {
   image?: ShopifyImage;
 };
 
+// ─── Metafield ───────────────────────────────────────────────────────────────
+
+export type MetaobjectField = {
+  key: string;
+  value: string;
+};
+
+export type MetaobjectReference = {
+  fields: MetaobjectField[];
+};
+
 export type Metafield = {
   key: string;
   namespace: string;
   value: string;
+  type?: string;
+  // Single metaobject reference (e.g. shopify.fabric)
+  reference?: MetaobjectReference | null;
+  // List of metaobject references
+  references?: {
+    nodes: MetaobjectReference[];
+  } | null;
 };
+
+// ─── Product ─────────────────────────────────────────────────────────────────
 
 export type Product = {
   id: string;
@@ -57,7 +77,7 @@ export type Product = {
   metafields?: (Metafield | null)[];
 };
 
-// ─── Transformed Product ──────────────────────────────────────────────────────
+// ─── Transformed Product ─────────────────────────────────────────────────────
 
 export type TransformedProduct = {
   id: string;
@@ -72,6 +92,11 @@ export type TransformedProduct = {
   images: { url: string; alt: string; width: number; height: number }[];
   variants: ProductVariant[];
   tags: string[];
+  accessorySize?: string;
+  fabric?: string;
+  activity?: string;
+  clothingFeatures?: string;
+  targetGender?: string;
 };
 
 // ─── Collection ──────────────────────────────────────────────────────────────
