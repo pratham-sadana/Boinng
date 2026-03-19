@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * POST /api/customers/create
  * 
- * Creates a new Shopify customer via Admin API
+ * Creates a new Shopify customer via Storefront API
+ * (Uses unauthenticated_write_customers scope for headless apps)
  * 
  * Request body:
  * {
@@ -16,14 +17,14 @@ import { NextRequest, NextResponse } from 'next/server';
  * Response:
  * {
  *   success: boolean
- *   customer?: { id, email, firstName, lastName, phone, createdAt }
- *   errors?: [{ field, message }]
+ *   customer?: { id, email, firstName, lastName, phone }
+ *   errors?: string[]
  *   message?: string
  * }
  */
 
 const CREATE_CUSTOMER_MUTATION = `
-  mutation CreateCustomer($input: CustomerInput!) {
+  mutation CreateCustomer($input: CustomerCreateInput!) {
     customerCreate(input: $input) {
       customer {
         id
@@ -31,10 +32,9 @@ const CREATE_CUSTOMER_MUTATION = `
         firstName
         lastName
         phone
-        createdAt
-        updatedAt
       }
-      userErrors {
+      customerUserErrors {
+        code
         field
         message
       }
@@ -42,14 +42,14 @@ const CREATE_CUSTOMER_MUTATION = `
   }
 `;
 
-interface CustomerInput {
+interface CustomerCreateInput {
   email: string;
   firstName?: string;
   lastName?: string;
   phone?: string;
 }
 
-interface CreateCustomerResponse {
+interface StorefrontCreateCustomerResponse {
   data?: {
     customerCreate: {
       customer: {
@@ -58,29 +58,27 @@ interface CreateCustomerResponse {
         firstName?: string;
         lastName?: string;
         phone?: string;
-        createdAt: string;
-        updatedAt: string;
       } | null;
-      userErrors: Array<{ field: string[]; message: string }>;
+      customerUserErrors: Array<{ code: string; field: string[]; message: string }>;
     };
   };
   errors?: Array<{ message: string }>;
 }
 
-async function shopifyAdminFetch<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
-  const url = `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-01/graphql.json`;
+async function shopifyStorefrontFetch<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
+  const url = `https://${process.env.SHOPIFY_STORE_DOMAIN}/api/2024-01/graphql.json`;
 
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_ACCESS_TOKEN || '',
+      'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN || '',
     },
     body: JSON.stringify({ query, variables }),
   });
 
   if (!response.ok) {
-    throw new Error(`Admin API error: ${response.statusText}`);
+    throw new Error(`Storefront API error: ${response.statusText}`);
   }
 
   return response.json();
@@ -89,9 +87,9 @@ async function shopifyAdminFetch<T>(query: string, variables?: Record<string, un
 export async function POST(req: NextRequest) {
   try {
     // Validate environment variables
-    if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
+    if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
       return NextResponse.json(
-        { success: false, message: 'Missing Shopify Admin API configuration' },
+        { success: false, message: 'Missing Shopify Storefront API configuration' },
         { status: 500 }
       );
     }
@@ -118,7 +116,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Build customer input
-    const customerInput: CustomerInput = {
+    const customerInput: CustomerCreateInput = {
       email: trimmedEmail,
     };
 
@@ -126,8 +124,8 @@ export async function POST(req: NextRequest) {
     if (lastName) customerInput.lastName = lastName.trim();
     if (phone) customerInput.phone = phone.trim();
 
-    // Call Shopify Admin API
-    const response = await shopifyAdminFetch<CreateCustomerResponse>(CREATE_CUSTOMER_MUTATION, {
+    // Call Shopify Storefront API
+    const response = await shopifyStorefrontFetch<StorefrontCreateCustomerResponse>(CREATE_CUSTOMER_MUTATION, {
       input: customerInput,
     });
 
@@ -146,13 +144,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Handle errors from Shopify
-    const errors = response.data?.customerCreate?.userErrors;
+    const errors = response.data?.customerCreate?.customerUserErrors;
     if (errors && errors.length > 0) {
-      console.error('[/api/customers/create] User errors:', errors);
+      console.error('[/api/customers/create] Customer user errors:', errors);
       return NextResponse.json(
         {
           success: false,
-          errors,
+          errors: errors.map(e => e.message),
           message: errors[0]?.message || 'Failed to create customer',
         },
         { status: 400 }
@@ -168,6 +166,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    console.log(`[/api/customers/create] Customer created successfully: ${customer.id}`);
+
     return NextResponse.json(
       {
         success: true,
@@ -177,7 +177,6 @@ export async function POST(req: NextRequest) {
           firstName: customer.firstName,
           lastName: customer.lastName,
           phone: customer.phone,
-          createdAt: customer.createdAt,
         },
         message: `Customer ${customer.email} created successfully`,
       },
