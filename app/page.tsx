@@ -6,6 +6,7 @@ import { Testimonials }     from '@/components/home/Testimonials';
 import { InstagramFeed }    from '@/components/home/InstagramFeed';
 import { FinalCTA }         from '@/components/home/FinalCTA';
 
+
 export default function HomePage() {
   return (
     <>

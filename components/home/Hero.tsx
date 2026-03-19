@@ -12,7 +12,8 @@ export function Hero() {
 
   const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
   const opacity = useTransform(scrollYProgress, [0, 0.6, 1], [1, 1, 0]);
-
+  console.log('DOMAIN:', process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN)
+  console.log('TOKEN:', process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN)
   return (
     <div className='border-b-8 rounded-lg w-full h-[75vh] border-boinng-yellow/50 overflow-hidden relative'>
       <section ref={ref} className="relative w-full h-full bg-boinng-black overflow-hidden">

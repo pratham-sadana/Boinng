@@ -27,10 +27,6 @@ export default async function CollectionPage({ params }: { params: { handle?: st
   
   const products = await getCollectionProducts(params.handle, 24);
 
-  if (!products || products.length === 0) {
-    notFound();
-  }
-
   const title = params.handle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
   return (
