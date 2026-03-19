@@ -53,10 +53,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let dynamicPages: MetadataRoute.Sitemap = [];
   
   try {
-    // Fetch collections from your API
-    const collectionsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || baseUrl}/api/menu`, {
-      next: { revalidate: 86400 }, // Revalidate daily
-    });
+    // Fetch collections from your API with timeout
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
+    const collectionsResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL || baseUrl}/api/menu`,
+      { 
+        signal: controller.signal,
+        next: { revalidate: 86400 }, // Revalidate daily
+      }
+    );
+    clearTimeout(timeout);
     
     if (collectionsResponse.ok) {
       const collections = await collectionsResponse.json();
@@ -74,7 +82,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
     }
   } catch (error) {
-    console.error('Failed to fetch collections for sitemap:', error);
+    // Gracefully handle errors - sitemap will use only static pages
+    // This is safe because collections are also routable if they exist
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Sitemap: Could not fetch dynamic collections. Using static pages only.');
+    }
   }
 
   return [...staticPages, ...dynamicPages];
