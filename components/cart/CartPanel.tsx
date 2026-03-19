@@ -112,16 +112,16 @@ export function CartPanel() {
                         <button
                           onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                           disabled={isLoading}
-                          className="p-1 rounded border border-black/20 hover:border-boinng-blue hover:bg-boinng-blue/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                          className="w-8 h-8 flex items-center justify-center rounded border border-black/20 hover:border-boinng-blue hover:bg-boinng-blue/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                           title={item.quantity === 1 ? 'Remove from cart' : 'Decrease quantity'}
                         >
                           <Minus size={14} />
                         </button>
-                        <span className="w-8 text-center font-bold text-sm">{item.quantity}</span>
+                        <span className="w-6 text-center font-bold text-sm">{item.quantity}</span>
                         <button
                           onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                           disabled={isLoading}
-                          className="p-1 rounded border border-black/20 hover:border-boinng-blue hover:bg-boinng-blue/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                          className="w-8 h-8 flex items-center justify-center rounded border border-black/20 hover:border-boinng-blue hover:bg-boinng-blue/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                         >
                           <Plus size={14} />
                         </button>

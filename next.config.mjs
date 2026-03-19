@@ -16,7 +16,20 @@ const nextConfig = {
         hostname: 'via.placeholder.com',
       },
     ],
-    unoptimized: true, // For development - can be optimized in production
+    unoptimized: true,
+  },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Permissions-Policy',
+            value: 'unload=*',
+          },
+        ],
+      },
+    ];
   },
 };
 

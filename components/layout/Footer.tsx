@@ -83,6 +83,7 @@ export function Footer() {
                   alt="BOINNG!"
                   width={180}
                   height={60}
+                  loading="lazy"
                   className="h-15 w-auto object-contain"
                 />
               </motion.div>

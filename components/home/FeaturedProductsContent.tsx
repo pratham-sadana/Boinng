@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { formatMoney } from '@/lib/utils';
 import { transformProduct } from '@/lib/shopify/api';
-import { QuickAddModal } from '@/components/product/QuickAddModal';
+import { useCart } from '@/lib/cart/context';
 
 const BADGE_BG: Record<string, string> = {
   'NEW': 'bg-boinng-blue text-[#FFFEFA]',
@@ -18,13 +18,13 @@ const containerVars: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.1 }
+    transition: { staggerChildren: 0.05, delayChildren: 0 }
   }
 };
 
 const itemVars: Variants = {
-  hidden: { opacity: 0, scale: 0.95, y: 30 },
-  show: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', bounce: 0.4 } }
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { type: 'tween', duration: 0.4 } }
 };
 
 import type { Product } from '@/lib/shopify/types';
@@ -33,6 +33,12 @@ function ProductCard({ product, onQuickAdd }: { product: Product; onQuickAdd: ()
   const transformed = transformProduct(product);
   const displayPrice = formatMoney(transformed.price);
   const comparePrice = transformed.comparePrice && parseFloat(transformed.comparePrice) > 0 ? formatMoney(transformed.comparePrice) : null;
+  const [isAdding, setIsAdding] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Get all available images
+  const allImages = transformed.images && transformed.images.length > 0 ? transformed.images : (transformed.image ? [transformed.image] : []);
+  const currentImage = allImages[currentImageIndex];
   
   // Check for badges based on tags
   let badge = '';
@@ -40,36 +46,54 @@ function ProductCard({ product, onQuickAdd }: { product: Product; onQuickAdd: ()
   else if (product.tags?.includes('hot')) badge = 'HOT';
   else if (product.tags?.includes('sale')) badge = 'SALE';
 
+  const handleQuickAdd = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsAdding(true);
+    await onQuickAdd();
+    setIsAdding(false);
+  };
+
+  const handleMouseEnter = () => {
+    // Show 2nd image on hover if exists
+    if (allImages.length > 1) {
+      setCurrentImageIndex(1);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    // Revert to 1st image when mouse leaves
+    setCurrentImageIndex(0);
+  };
+
   return (
-    <motion.div variants={itemVars}>
-      <div className="block group h-full">
-        <motion.div 
-          whileHover="hover"
-          className="group cursor-pointer relative flex flex-col h-full rounded-2xl border border-black/5 shadow-none transition-all duration-500 hover:-translate-y-2 hover:shadow-lg overflow-hidden bg-[#1354e5] "
+    <div className="block group h-full" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        <div 
+          className="group cursor-pointer relative flex flex-col rounded-xl border h-full border-black/5 shadow-none transition-all duration-500 hover:-translate-y-2 hover:shadow-lg overflow-hidden"
         >
-          {/* Image Block */}
-          <div className="relative aspect-[4/5] w-full border-b border-black/5 flex items-center justify-center bg-black/[0.03] overflow-hidden">
+          {/* Image */}
+        <div className="relative aspect-[4/5] md:aspect-auto md:h-[300px] overflow-hidden bg-black/5">
+          <div className="relative w-full h-full flex items-center justify-center bg-black/[0.03] overflow-hidden">
             <Link href={`/products/${product.handle}`} className="absolute inset-0 z-10" />
-            {transformed.image?.url ? (
+            {currentImage?.url ? (
               <Image
-                src={transformed.image.url}
-                alt={transformed.image.alt || product.title}
+                src={currentImage.url}
+                alt={currentImage.alt || product.title}
                 fill
-                className="object-cover w-full h-full"
+                loading="eager"
+                className="object-cover w-full h-full transition-opacity duration-300"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 priority={false}
+                key={currentImageIndex}
                 onError={(e) => {
-                  console.warn(`Failed to load image: ${transformed.image?.url}`);
+                  console.warn(`Failed to load image: ${currentImage?.url}`);
                 }}
               />
             ) : (
-              <motion.span 
-                variants={{ hover: { scale: 1.05, rotate: -2 } }}
-                transition={{ type: 'spring', bounce: 0.5 }}
+              <span 
                 className="font-display text-4xl uppercase text-center tracking-widest leading-none p-6 text-black/30"
               >
                 {product.title}
-              </motion.span>
+              </span>
             )}
             
             {badge && (
@@ -78,47 +102,72 @@ function ProductCard({ product, onQuickAdd }: { product: Product; onQuickAdd: ()
               </span>
             )}
 
-            {/* Quick Add Overlay */}
-            <motion.button
-              onClick={(e) => {
-                e.stopPropagation();
-                onQuickAdd();
-              }}
-              variants={{ hover: { opacity: 1, y: 0 } }}
-              initial={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.2 }}
-              className="absolute bottom-4 left-4 right-4 bg-boinng-blue text-[#FFFEFA] font-display text-xs font-bold tracking-widest uppercase text-center py-4 rounded-xl shadow-md hover:bg-boinng-yellow transition-colors z-20"
-            >
-              QUICK ADD
-            </motion.button>
-          </div>
 
-          {/* Info */}
-          <div className="pt-6 pb-6 px-6 flex-1 flex flex-col items-center justify-center text-center">
-            <p className="text-sm font-bold tracking-tight uppercase text-white">{product.title}</p>
-            <div className="flex gap-2 items-baseline mt-1">
-              <span className="text-sm font-medium text-white/70">{displayPrice}</span>
-              {comparePrice && <span className="text-xs font-medium text-white/40 line-through">{comparePrice}</span>}
-            </div>
+
+            {/* Quick Add Overlay */}
+            <button
+              onClick={handleQuickAdd}
+              disabled={isAdding}
+              className="absolute bottom-4 left-4 right-4 bg-boinng-blue text-[#FFFEFA] font-display text-xs font-bold tracking-widest uppercase text-center py-4 rounded-xl shadow-md hover:bg-boinng-yellow transition-colors z-20 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isAdding ? 'ADDING...' : 'QUICK ADD'}
+            </button>
           </div>
-        </motion.div>
+        </div>
+
+        {/* Info */}
+        <div className=" flex flex-col md:flex-row md:items-start justify-between gap-2 bg-boinng-bg p-3 md:p-4 rounded-xl border border-boinng-blue/5">
+          <div className="flex-1">
+            <h3 className="font-display text-base md:text-2xl font-bold uppercase tracking-widest text-boinng-black leading-tight mb-1 md:mb-2 line-clamp-2 md:line-clamp-none">
+              {transformed.title}
+            </h3>
+            {transformed.tags.length > 0 && (
+              <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-boinng-black/40">
+                {transformed.tags[0]}
+              </p>
+            )}
+          </div>
+          <div className="text-left md:text-right flex flex-row items-center gap-2 md:flex-col md:gap-1">
+            <p className="text-base md:text-lg font-bold text-boinng-blue">
+              {displayPrice}
+            </p>
+            {comparePrice && (
+              <p className="text-[10px] md:text-xs font-bold text-boinng-black/40 line-through">
+                {comparePrice}
+              </p>
+            )}
+          </div>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 export function FeaturedProductsContent({ title, products }: { title: string; products: Product[] }) {
-  const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
+  const { addItem } = useCart();
+
+  const handleQuickAdd = async (product: Product) => {
+    const transformed = transformProduct(product);
+    // Use the default variant ID (merchandiseId), not the product ID
+    const variantId = transformed.variants[0]?.id;
+    if (!variantId) {
+      console.error('No variant available for product:', transformed.title);
+      return;
+    }
+    await addItem({
+      id: variantId,
+      quantity: 1,
+      title: transformed.title,
+      price: parseFloat(transformed.price),
+      image: transformed.image?.url || '/logos/blue-text.png',
+    });
+  };
 
   return (
     <section className="py-12 bg-[#FFFEFA] overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-4 md:px-10">
 
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7, type: "spring", bounce: 0.4 }}
+        <div
           className="flex justify-between items-end mb-14 border-b border-black/10 pb-6"
         >
           <h2 className="font-display text-[clamp(2.5rem,6vw,4rem)] text-boinng-black uppercase tracking-widest leading-none">
@@ -127,7 +176,7 @@ export function FeaturedProductsContent({ title, products }: { title: string; pr
           <Link href="/collections" className="hidden sm:inline-block font-bold text-sm tracking-widest uppercase text-boinng-black hover:text-boinng-blue transition-colors">
             SHOP ALL &rarr;
           </Link>
-        </motion.div>
+        </div>
 
         {products.length === 0 ? (
           <div className="text-center py-12">
@@ -136,31 +185,19 @@ export function FeaturedProductsContent({ title, products }: { title: string; pr
             </p>
           </div>
         ) : (
-          <motion.div
-            variants={containerVars}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-100px" }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          <div
+            className="grid grid-cols-2 lg:grid-cols-4 gap-6"
           >
             {products.map((p, idx) => (
               <ProductCard 
                 key={p.handle} 
                 product={p} 
-                onQuickAdd={() => setSelectedProduct(idx)}
+                onQuickAdd={() => handleQuickAdd(p)}
               />
             ))}
-          </motion.div>
+          </div>
         )}
       </div>
-
-      {selectedProduct !== null && (
-        <QuickAddModal
-          product={transformProduct(products[selectedProduct])}
-          isOpen={selectedProduct !== null}
-          onClose={() => setSelectedProduct(null)}
-        />
-      )}
     </section>
   );
 }

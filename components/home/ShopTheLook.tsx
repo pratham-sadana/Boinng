@@ -4,7 +4,6 @@ import { motion, Variants } from 'framer-motion';
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { QuickAddModal } from '@/components/product/QuickAddModal';
 import { useCart } from '@/lib/cart/context';
 import { TransformedProduct } from '@/lib/shopify/types';
 
@@ -26,7 +25,7 @@ const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.3 }
+    transition: { staggerChildren: 0.05, delayChildren: 0.2 }
   }
 };
 
@@ -35,12 +34,11 @@ const itemVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: 'spring', stiffness: 100, damping: 10 }
+    transition: { type: 'tween', duration: 0.4 }
   }
 };
 
 export function ShopTheLook({ title, description, backgroundImage, hotspots }: ShopTheLookProps) {
-  const [selectedProduct, setSelectedProduct] = useState<Hotspot | null>(null);
   const [hoveredHotspot, setHoveredHotspot] = useState<string | null>(null);
   const { addItem } = useCart();
 
@@ -48,10 +46,7 @@ export function ShopTheLook({ title, description, backgroundImage, hotspots }: S
     <section className="py-32 bg-[#FFFEFA] overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-4 md:px-10">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+        <div
           className="text-center mb-16"
         >
           <h2 className="font-display text-[clamp(2.5rem,6vw,4rem)] text-boinng-black uppercase tracking-widest leading-none mb-4">
@@ -62,14 +57,10 @@ export function ShopTheLook({ title, description, backgroundImage, hotspots }: S
               {description}
             </p>
           )}
-        </motion.div>
+        </div>
 
         {/* Main Grid */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7, type: 'spring', bounce: 0.4 }}
+        <div
           className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start mb-16"
         >
           {/* Image with hotspots */}
@@ -80,9 +71,9 @@ export function ShopTheLook({ title, description, backgroundImage, hotspots }: S
                   src={backgroundImage}
                   alt={title}
                   fill
+                  priority
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  priority
                 />
               ) : (
                 <div className="w-full h-full bg-black/10 flex items-center justify-center">
@@ -98,7 +89,6 @@ export function ShopTheLook({ title, description, backgroundImage, hotspots }: S
                   style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%` }}
                   onMouseEnter={() => setHoveredHotspot(hotspot.id)}
                   onMouseLeave={() => setHoveredHotspot(null)}
-                  onClick={() => setSelectedProduct(hotspot)}
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 10 }}
@@ -135,15 +125,14 @@ export function ShopTheLook({ title, description, backgroundImage, hotspots }: S
           </div>
 
           {/* Products List */}
-          <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <div>
             <div className="space-y-4">
               {hotspots.map((hotspot) => (
                 <motion.div
                   key={hotspot.id}
                   variants={itemVariants}
                   whileHover={{ x: 10 }}
-                  className="flex gap-4 p-4 rounded-lg border border-black/10 hover:border-boinng-blue/50 hover:bg-boinng-blue/5 transition-all cursor-pointer group"
-                  onClick={() => setSelectedProduct(hotspot)}
+                  className="flex gap-4 p-4 rounded-lg border border-black/10 hover:border-boinng-blue/50 hover:bg-boinng-blue/5 transition-all group"
                 >
                   {/* Product Image */}
                   <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-black/5 relative">
@@ -182,16 +171,16 @@ export function ShopTheLook({ title, description, backgroundImage, hotspots }: S
                     whileTap={{ scale: 0.95 }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (hotspot.product.variants.length === 1) {
+                      // Use variant ID (merchandiseId), not product ID
+                      const variantId = hotspot.product.variants[0]?.id;
+                      if (variantId) {
                         addItem({
-                          id: hotspot.product.variants[0].id,
+                          id: variantId,
                           title: hotspot.product.title,
                           quantity: 1,
-                          price: parseFloat(hotspot.product.variants[0].price.amount),
+                          price: parseFloat(hotspot.product.price),
                           image: hotspot.product.image?.url || '/logos/cropped.png',
                         });
-                      } else {
-                        setSelectedProduct(hotspot);
                       }
                     }}
                     className="flex-shrink-0 px-4 py-2 bg-boinng-black text-white rounded-full text-xs font-bold tracking-widest uppercase hover:bg-boinng-blue transition-colors"
@@ -201,17 +190,8 @@ export function ShopTheLook({ title, description, backgroundImage, hotspots }: S
                 </motion.div>
               ))}
             </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Quick Add Modal */}
-        {selectedProduct && (
-          <QuickAddModal
-            product={selectedProduct.product}
-            isOpen={selectedProduct !== null}
-            onClose={() => setSelectedProduct(null)}
-          />
-        )}
+          </div>
+        </div>
       </div>
     </section>
   );

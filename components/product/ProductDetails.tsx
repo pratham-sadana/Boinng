@@ -81,7 +81,7 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
   }
 
   return (
-    <div className="grid md:grid-cols-2 gap-8 lg:gap-16 items-start">
+    <div className="grid md:grid-cols-2 gap-8 lg:gap-16 items-start pb-24 md:pb-0">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="sticky top-0 z-10">
         {/* Main Image Container */}
         <div className="rounded-2xl overflow-hidden shadow-2xl border border-black/5 mb-4 relative group">
@@ -137,14 +137,14 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
         {displayImages.length > 1 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="space-y-3">
             <h3 className="text-xs font-bold uppercase tracking-widest text-black/60">Product Images</h3>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="flex overflow-x-auto md:grid md:grid-cols-4 gap-2 snap-x snap-mandatory hide-scrollbar pb-2">
               {displayImages.map((image, index) => (
                 <motion.button
                   key={index}
                   onClick={() => setSelectedImageIndex(index)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                  className={`relative shrink-0 w-24 snap-start md:w-full aspect-square rounded-lg overflow-hidden border-2 transition-all ${
                     selectedImageIndex === index ? 'border-boinng-blue shadow-lg' : 'border-black/10 hover:border-black/30'
                   }`}
                 >
@@ -229,15 +229,17 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
           </motion.div>
         )}
 
-        <motion.button
-          onClick={handleAddToCart}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          disabled={!selectedVariant || !product.availableForSale || isAdding || isLoading}
-          className="w-full bg-boinng-blue text-white py-4 rounded-full font-bold uppercase tracking-widest text-lg shadow-lg hover:shadow-xl transition-shadow disabled:opacity-50 disabled:cursor-not-allowed mb-4"
-        >
-          {isAdding || isLoading ? 'Adding...' : !product.availableForSale ? 'Out of Stock' : 'Add to Cart'}
-        </motion.button>
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-black/10 z-50 md:static md:p-0 md:bg-transparent md:border-none md:z-auto">
+          <motion.button
+            onClick={handleAddToCart}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            disabled={!selectedVariant || !product.availableForSale || isAdding || isLoading}
+            className="w-full bg-boinng-blue text-white py-4 rounded-full font-bold uppercase tracking-widest text-lg shadow-lg hover:shadow-xl transition-shadow disabled:opacity-50 disabled:cursor-not-allowed mb-0 md:mb-4"
+          >
+            {isAdding || isLoading ? 'Adding...' : !product.availableForSale ? 'Out of Stock' : 'Add to Cart'}
+          </motion.button>
+        </div>
 
         <div className="grid grid-cols-2 gap-3 mb-8">
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="py-3 rounded-full border-2 border-black/20 font-bold uppercase tracking-widest text-sm hover:border-boinng-blue transition-colors">

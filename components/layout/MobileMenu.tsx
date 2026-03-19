@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
 import Link from 'next/link';
 
 interface MobileMenuProps {
@@ -15,6 +16,11 @@ const NAV_LINKS = [
 ];
 
 export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+  const handleNavigation = () => {
+    window.scrollTo(0, 0);
+    onClose();
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -35,14 +41,22 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed top-0 left-0 h-full w-full max-w-xs bg-boinng-bg z-40 md:hidden flex flex-col p-6 pt-32"
+            className="fixed top-0 left-0 h-full w-full max-w-xs bg-boinng-bg z-40 md:hidden flex flex-col p-6 pt-24"
           >
+            <button
+              onClick={onClose}
+              className="absolute top-6 right-6 p-2 rounded-full hover:bg-black/5 transition-colors"
+              aria-label="Close menu"
+            >
+              <X size={24} />
+            </button>
+
             <nav className="flex flex-col gap-6">
               {NAV_LINKS.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  onClick={onClose}
+                  onClick={handleNavigation}
                   className="text-2xl font-bold uppercase tracking-widest hover:text-boinng-blue transition-colors"
                 >
                   {link.label}
@@ -53,7 +67,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             <div className="mt-auto pt-6 border-t border-black/10">
               <Link
                 href="/collections/all"
-                onClick={onClose}
+                onClick={handleNavigation}
                 className="block w-full bg-boinng-blue text-white text-center py-3 rounded-full font-bold uppercase tracking-widest"
               >
                 Shop Now

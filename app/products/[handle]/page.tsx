@@ -57,9 +57,10 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
       </div>
       
       {/* Products You May Like Section */}
-      <div className="mt-24 pt-16 border-t border-black/10">
+      <div className="mt-24 text-center text-5xl pt-16 border-t font-display border-black/10">
+       Products You May Like
         <FeaturedProducts 
-          title="PRODUCTS YOU MAY LIKE"
+        // title="YOU MAY ALSO LIKE"
           collectionHandle="best-sellers"
           limit={4}
         />

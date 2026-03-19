@@ -1,5 +1,6 @@
 'use client';
 import { motion, Variants } from 'framer-motion';
+import { Check } from 'lucide-react';
 
 const REVIEWS = [
   { id: 1, text: "Minimalist streetwear at its peak. The quality and the fit are unmatched.", author: "RHEA K.", role: "Verified Buyer" },
@@ -35,10 +36,7 @@ export function Testimonials() {
 
       <div className="max-w-[1400px] mx-auto px-4 md:px-10">
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+        <div
           className="text-center mb-16"
         >
           <h2 className="font-sans text-[clamp(2rem,5vw,3.5rem)] text-boinng-black uppercase tracking-widest leading-none mb-4">
@@ -47,13 +45,9 @@ export function Testimonials() {
           <p className="font-medium text-sm tracking-widest text-boinng-black/50 uppercase">
             Don't just take our word for it
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+        <div
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
           {REVIEWS.map((r) => (
@@ -75,13 +69,16 @@ export function Testimonials() {
                 <span className="text-[10px] font-medium tracking-[0.15em] text-boinng-black uppercase">
                   {r.author}
                 </span>
-                <span className="text-[9px] tracking-[0.2em] text-boinng-black/40 uppercase">
-                  {r.role}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] tracking-[0.2em] text-boinng-black/40 uppercase">
+                    {r.role}
+                  </span>
+                  <Check size={14} className="text-green-500 flex-shrink-0 stroke-[3]" />
+                </div>
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -20,6 +20,11 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceTimer = useRef<NodeJS.Timeout>();
 
+  const handleNavigation = () => {
+    window.scrollTo(0, 0);
+    onClose();
+  };
+
   // Focus input when modal opens
   useEffect(() => {
     if (isOpen) {
@@ -71,6 +76,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
       e.preventDefault();
       const selectedProduct = results[selectedIndex];
       if (selectedProduct?.handle) {
+        window.scrollTo(0, 0);
         window.location.href = `/products/${selectedProduct.handle}`;
       }
     }
@@ -129,9 +135,8 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 {query && results.length > 0 && (
                   <div className="divide-y divide-black/5">
                     {results.map((product, index) => (
-                      <Link key={product.id} href={`/products/${product.handle}`}>
+                      <Link key={product.id} href={`/products/${product.handle}`} onClick={handleNavigation}>
                         <motion.div
-                          onClick={onClose}
                           onHoverStart={() => setSelectedIndex(index)}
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
@@ -148,6 +153,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                                 alt={product.title}
                                 width={64}
                                 height={64}
+                                loading="lazy"
                                 className="w-full h-full object-cover"
                               />
                             </div>

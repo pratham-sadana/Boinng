@@ -8,7 +8,7 @@ interface FeaturedProductsProps {
 }
 
 export async function FeaturedProducts({
-  title = "THE DROP",
+  title = "",
   collectionHandle = "best-sellers",
   limit = 4
 }: FeaturedProductsProps) {

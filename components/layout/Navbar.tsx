@@ -16,8 +16,8 @@ interface NavLink {
 
 // Fallback menu in case API fails
 const FALLBACK_NAV_LINKS: NavLink[] = [
-  { label: 'Christmas',    href: '/collections/christmas' },
-  { label: 'New Arrivals', href: '/collections/new-arrivals' },
+  { label: 'fallback',    href: '/collections/christmas' },
+  { label: 'not working', href: '/collections/new-arrivals' },
   { label: 'Sale',         href: '/collections/sale' },
   { label: 'Valentines',   href: '/collections/valentines' },
 ];
@@ -32,6 +32,10 @@ export function Navbar() {
   const { openCart, items } = useCart();
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handleNavigation = () => {
+    window.scrollTo(0, 0);
+  };
 
   // Fetch dynamic menu from Shopify
   useEffect(() => {
@@ -91,7 +95,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 md:h-18 px-6 md:px-10 max-w-[1400px] mx-auto">
 
           {/* Logo */}
-          <Link href="/" aria-label="BOINNG! Home" className="flex-shrink-0">
+          <Link href="/" onClick={handleNavigation} aria-label="BOINNG! Home" className="flex-shrink-0">
             <motion.div
               whileHover={{ scale: 1.04, rotate: -1.5 }}
               whileTap={{ scale: 0.95 }}
@@ -111,16 +115,17 @@ export function Navbar() {
               <li key={l.href}>
                 <Link
                   href={l.href}
+                  onClick={handleNavigation}
                   onMouseEnter={() => setActiveLink(l.href)}
                   onMouseLeave={() => setActiveLink(null)}
                   className="relative px-4 py-2 text-xs font-bold tracking-[0.18em] text-boinng-black uppercase hover:text-boinng-blue transition-colors duration-200 flex items-center gap-1.5"
                 >
-                  {/* Sale badge */}
+                  {/* Sale badge
                   {l.label === 'Sale' && (
                     <span className="inline-block bg-red-500 text-white text-[8px] font-black tracking-widest px-1.5 py-0.5 rounded-sm uppercase">
                       HOT
                     </span>
-                  )}
+                  )}*/}
                   {l.label}
 
                   {/* Animated underline */}

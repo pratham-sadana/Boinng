@@ -37,18 +37,18 @@ const TRUST_SIGNALS = [
 ];
 
 const containerVariants: Variants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 1 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.12 }
+    transition: { staggerChildren: 0 }
   }
 };
 
 const cardVariants: Variants = {
-  hidden: { y: 40, opacity: 0 },
+  hidden: { y: 0, opacity: 1 },
   visible: {
     y: 0, opacity: 1,
-    transition: { type: 'spring', stiffness: 200, damping: 20 }
+    transition: { type: 'tween', duration: 0 }
   }
 };
 
@@ -56,7 +56,7 @@ const headerVariants: Variants = {
   hidden: { opacity: 0, x: -30 },
   visible: {
     opacity: 1, x: 0,
-    transition: { duration: 0.7, type: "spring", bounce: 0.4 }
+    transition: { duration: 0.5, type: "tween" }
   }
 };
 
@@ -64,7 +64,7 @@ const statsVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({
     opacity: 1, y: 0,
-    transition: { duration: 0.6, delay: i * 0.1 }
+    transition: { duration: 0.4, delay: i * 0.05 }
   })
 };
 
@@ -81,11 +81,7 @@ export function Features() {
     <section className="py-16 bg-boinng-yellow overflow-hidden relative">
       <div className="max-w-[1400px] mx-auto px-4 md:px-10">
 
-        <motion.div
-          variants={headerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+        <div
           className="flex flex-col lg:flex-row gap-12 justify-between items-center mb-20 ml-32"
         >
           <div className="flex-1">
@@ -98,11 +94,7 @@ export function Features() {
           </div>
 
           <div className="flex-1">
-            <motion.ul
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
+            <ul
               className="space-y-4"
             >
               {QUALITY_POINTS.map((point, i) => (
@@ -120,9 +112,9 @@ export function Features() {
                   </span>
                 </motion.li>
               ))}
-            </motion.ul>
+            </ul>
           </div>
-        </motion.div>
+        </div>
 
 
       </div>

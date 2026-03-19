@@ -11,8 +11,10 @@ export const COLLECTION_QUERY = `
             id
             title
             handle
+            description
             availableForSale
             vendor
+            options { name values }
             priceRange {
               minVariantPrice { amount currencyCode }
             }
@@ -20,13 +22,18 @@ export const COLLECTION_QUERY = `
               minVariantPrice { amount currencyCode }
             }
             featuredImage { url altText width height }
+            images(first: 10) { edges { node { url altText width height } } }
             tags
-            variants(first: 1) {
+            variants(first: 10) {
               edges {
                 node {
                   id
+                  title
+                  availableForSale
                   price { amount currencyCode }
                   compareAtPrice { amount currencyCode }
+                  selectedOptions { name value }
+                  image { url altText width height }
                 }
               }
             }
@@ -85,7 +92,9 @@ export const FEATURED_PRODUCTS_QUERY = `
           id
           title
           handle
+          description
           availableForSale
+          options { name values }
           priceRange {
             minVariantPrice { amount currencyCode }
           }
@@ -93,13 +102,18 @@ export const FEATURED_PRODUCTS_QUERY = `
             minVariantPrice { amount currencyCode }
           }
           featuredImage { url altText width height }
+          images(first: 10) { edges { node { url altText width height } } }
           tags
-          variants(first: 1) {
+          variants(first: 10) {
             edges {
               node {
                 id
+                title
+                availableForSale
                 price { amount currencyCode }
                 compareAtPrice { amount currencyCode }
+                selectedOptions { name value }
+                image { url altText width height }
               }
             }
           }

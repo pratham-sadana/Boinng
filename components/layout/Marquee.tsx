@@ -2,9 +2,6 @@
 import { useRef, useState, useEffect } from 'react';
 import {
   motion,
-  useScroll,
-  useSpring,
-  useTransform,
   useMotionValue,
   useAnimationFrame,
 } from 'framer-motion';
@@ -21,9 +18,8 @@ export function Marquee({ items = DEFAULT, sep = '✦', dark = false, speed = 80
   const singleRef = useRef<HTMLDivElement>(null);
   const baseX = useMotionValue(0);
 
-  const { scrollY } = useScroll();
-  const scrollVelocity = useTransform(scrollY, [0, 1000], [0, 5], { clamp: false });
-  const velocityFactor = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
+  // Removed scroll listeners for performance (TBT reduction)
+  // const velocityFactor = useSpring(0, { damping: 50, stiffness: 400 });
 
   // ✅ Measure the exact pixel width of ONE copy
   useEffect(() => {
@@ -37,7 +33,6 @@ export function Marquee({ items = DEFAULT, sep = '✦', dark = false, speed = 80
 
     const hoverSpeedFactor = isHovered ? 0.3 : 1;
     let moveBy = -speed * (delta / 1000) * hoverSpeedFactor;
-    moveBy += moveBy * velocityFactor.get();
 
     let next = baseX.get() + moveBy;
 
