@@ -6,6 +6,9 @@ import { NextRequest, NextResponse } from 'next/server';
  * Creates a new Shopify customer via Storefront API
  * (Uses unauthenticated_write_customers scope for headless apps)
  * 
+ * Note: A secure password is automatically generated for the customer.
+ * Customers can reset their password later if needed.
+ * 
  * Request body:
  * {
  *   email: string (required)
@@ -44,6 +47,7 @@ const CREATE_CUSTOMER_MUTATION = `
 
 interface CustomerCreateInput {
   email: string;
+  password: string;
   firstName?: string;
   lastName?: string;
   phone?: string;
@@ -84,6 +88,30 @@ async function shopifyStorefrontFetch<T>(query: string, variables?: Record<strin
   return response.json();
 }
 
+// Generate a secure random password for newsletter signup customers
+function generateSecurePassword(): string {
+  const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+  const numbers = '0123456789';
+  const special = '!@#$%^&*';
+  
+  let password = '';
+  // Ensure at least one of each character type
+  password += uppercase[Math.floor(Math.random() * uppercase.length)];
+  password += lowercase[Math.floor(Math.random() * lowercase.length)];
+  password += numbers[Math.floor(Math.random() * numbers.length)];
+  password += special[Math.floor(Math.random() * special.length)];
+  
+  // Fill the rest with random characters
+  const allChars = uppercase + lowercase + numbers + special;
+  for (let i = password.length; i < 16; i++) {
+    password += allChars[Math.floor(Math.random() * allChars.length)];
+  }
+  
+  // Shuffle the password
+  return password.split('').sort(() => Math.random() - 0.5).join('');
+}
+
 export async function POST(req: NextRequest) {
   try {
     // Validate environment variables
@@ -118,6 +146,7 @@ export async function POST(req: NextRequest) {
     // Build customer input
     const customerInput: CustomerCreateInput = {
       email: trimmedEmail,
+      password: generateSecurePassword(),
     };
 
     if (firstName) customerInput.firstName = firstName.trim();
