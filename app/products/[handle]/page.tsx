@@ -7,8 +7,9 @@ import { FeaturedProducts } from '@/components/home/FeaturedProducts';
 export const revalidate = 60;
 
 // Generate metadata for the product page
-export async function generateMetadata({ params }: { params: { handle: string } }) {
-  const product = await getProduct(params.handle);
+export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }) {
+  const resolvedParams = await params;
+  const product = await getProduct(resolvedParams.handle);
 
   if (!product) {
     return {
@@ -33,8 +34,15 @@ export async function generateMetadata({ params }: { params: { handle: string } 
   };
 }
 
-export default async function ProductPage({ params }: { params: { handle: string } }) {
-  const product = await getProduct(params.handle);
+export default async function ProductPage({ params }: { params: Promise<{ handle: string }> }) {
+  const resolvedParams = await params;
+  let product;
+  try {
+    product = await getProduct(resolvedParams.handle);
+  } catch (error) {
+    console.error('ProductPage error:', error);
+    throw error; // Let error boundary handle it
+  }
 
   if (!product) {
     notFound();

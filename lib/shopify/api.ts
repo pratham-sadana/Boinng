@@ -16,7 +16,7 @@ export async function getCollectionProducts(
 ): Promise<Product[]> {
   try {
     const response = await shopifyFetch<{
-      collection: Collection;
+      collection: Collection | null;
     }>({
       query: COLLECTION_QUERY,
       variables: {
@@ -26,13 +26,19 @@ export async function getCollectionProducts(
     });
 
     if (!response.collection) {
-      console.warn(`Collection "${handle}" not found`);
+      console.warn(`Collection "${handle}" not found in Shopify store`);
+      return [];
+    }
+
+    if (!response.collection.products?.edges) {
+      console.warn(`Collection "${handle}" has no products`);
       return [];
     }
 
     return response.collection.products.edges.map((edge) => edge.node);
   } catch (error) {
     console.error(`Error fetching collection "${handle}":`, error);
+    // Return empty array but don't throw - let the page render
     return [];
   }
 }

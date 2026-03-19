@@ -4,15 +4,16 @@ import { FeaturedProductsContent } from '@/components/home/FeaturedProductsConte
 
 export const revalidate = 60;
 
-export async function generateMetadata({ params }: { params: { handle?: string } }) {
-  if (!params.handle) {
+export async function generateMetadata({ params }: { params: Promise<{ handle?: string }> }) {
+  const resolvedParams = await params;
+  if (!resolvedParams.handle) {
     return {
       title: 'Collection | BOINNG!',
       description: 'Browse our collection at BOINNG!',
     };
   }
   
-  const title = params.handle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  const title = resolvedParams.handle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   
   return {
     title: `${title} | BOINNG!`,
@@ -20,14 +21,21 @@ export async function generateMetadata({ params }: { params: { handle?: string }
   };
 }
 
-export default async function CollectionPage({ params }: { params: { handle?: string } }) {
-  if (!params.handle) {
+export default async function CollectionPage({ params }: { params: Promise<{ handle?: string }> }) {
+  const resolvedParams = await params;
+  if (!resolvedParams.handle) {
     notFound();
   }
   
-  const products = await getCollectionProducts(params.handle, 24);
+  let products;
+  try {
+    products = await getCollectionProducts(resolvedParams.handle, 24);
+  } catch (error) {
+    console.error('CollectionPage error:', error);
+    throw error; // Let error boundary handle it
+  }
 
-  const title = params.handle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  const title = resolvedParams.handle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
   return (
     <div className="">
