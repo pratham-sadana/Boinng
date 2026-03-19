@@ -60,7 +60,7 @@ export function Marquee({ items = DEFAULT, sep = '✦', white = false, speed = 8
           {items.map((t, i) => (
             <span
               key={i}
-              className={`font-display text-sm md:text-base font-bold tracking-[0.15em] uppercase px-8 flex items-center whitespace-nowrap ${white ? 'text-boinng-black' : 'text-boinng-yellow'} ${isHovered ? 'opacity-70' : 'opacity-100'} transition-all duration-300`}
+              className={`font-display text-sm md:text-base font-bold tracking-[0.15em] uppercase px-8 flex items-center whitespace-nowrap ${white ? 'text-boinng-yellow' : 'text-boinng-black'} ${isHovered ? 'opacity-70' : 'opacity-100'} transition-all duration-300`}
             >
               {t}
               <span className="ml-16 inline-block font-normal opacity-30">{sep}</span>
@@ -73,7 +73,7 @@ export function Marquee({ items = DEFAULT, sep = '✦', white = false, speed = 8
           {items.map((t, i) => (
             <span
               key={i}
-              className={`font-display text-sm md:text-base font-bold tracking-[0.15em] uppercase px-8 flex items-center whitespace-nowrap ${white ? 'text-boinng-black' : 'text-boinng-yellow'} ${isHovered ? 'opacity-70' : 'opacity-100'} transition-all duration-300`}
+              className={`font-display text-sm md:text-base font-bold tracking-[0.15em] uppercase px-8 flex items-center whitespace-nowrap ${white ? 'text-boinng-yellow' : 'text-boinng-black'} ${isHovered ? 'opacity-70' : 'opacity-100'} transition-all duration-300`}
             >
               {t}
               <span className="ml-16 inline-block font-normal opacity-30">{sep}</span>
