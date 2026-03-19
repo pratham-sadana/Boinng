@@ -9,12 +9,13 @@ interface FeaturedProductsProps {
 
 export async function FeaturedProducts({
   title = "THE DROP",
-  collectionHandle = "all",
+  collectionHandle = "best-sellers",
   limit = 4
 }: FeaturedProductsProps) {
-  const products = collectionHandle === 'all'
-    ? await getCollectionProducts('all', limit)
-    : await getCollectionProducts(collectionHandle, limit);
+  // Ensure we have a valid handle
+  const handle = collectionHandle || "best-sellers";
+  
+  const products = await getCollectionProducts(handle, limit);
 
   return <FeaturedProductsContent title={title} products={products} />;
 }

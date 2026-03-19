@@ -4,8 +4,14 @@ import { FeaturedProductsContent } from '@/components/home/FeaturedProductsConte
 
 export const revalidate = 60;
 
-export async function generateMetadata({ params }: { params: { handle: string } }) {
-  // You might want to fetch collection details here to get a proper title
+export async function generateMetadata({ params }: { params: { handle?: string } }) {
+  if (!params.handle) {
+    return {
+      title: 'Collection | BOINNG!',
+      description: 'Browse our collection at BOINNG!',
+    };
+  }
+  
   const title = params.handle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   
   return {
@@ -14,10 +20,14 @@ export async function generateMetadata({ params }: { params: { handle: string } 
   };
 }
 
-export default async function CollectionPage({ params }: { params: { handle: string } }) {
+export default async function CollectionPage({ params }: { params: { handle?: string } }) {
+  if (!params.handle) {
+    notFound();
+  }
+  
   const products = await getCollectionProducts(params.handle, 24);
 
-  if (!products) {
+  if (!products || products.length === 0) {
     notFound();
   }
 
