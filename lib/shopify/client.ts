@@ -1,13 +1,20 @@
-const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
-const token  = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
+// Get Shopify config - only validated at runtime, not at build time
+function getShopifyConfig() {
+  const domain = process.env.SHOPIFY_STORE_DOMAIN;
+  const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 
-if (!domain || !token) {
-  throw new Error(
-    'Missing Shopify environment variables. Please set NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN and NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN.'
-  );
+  if (!domain || !token) {
+    throw new Error(
+      'Missing Shopify environment variables. Please set SHOPIFY_STORE_DOMAIN and SHOPIFY_STOREFRONT_ACCESS_TOKEN.'
+    );
+  }
+
+  return {
+    domain,
+    token,
+    apiUrl: `https://${domain}/api/2024-01/graphql.json`,
+  };
 }
-
-const apiUrl = `https://${domain}/api/2024-01/graphql.json`;
 
 export async function shopifyFetch<T>({
   query,
@@ -18,11 +25,13 @@ export async function shopifyFetch<T>({
   variables?: Record<string, unknown>;
   cache?: RequestCache;
 }): Promise<T> {
+  const { apiUrl, token } = getShopifyConfig();
+
   const res = await fetch(apiUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': token!,
+      'X-Shopify-Storefront-Access-Token': token,
     },
     body: JSON.stringify({ query, variables }),
     next: { revalidate: 60 }, // ISR — revalidate every 60s
