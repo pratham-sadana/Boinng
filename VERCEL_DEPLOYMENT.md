@@ -18,8 +18,8 @@ This means environment variables aren't set on Vercel.
 
 | Variable Name | Value |
 |---|---|
-| `SHOPIFY_STORE_DOMAIN` | `gnnh16-hf.myshopify.com` (from your Shopify admin) |
-| `SHOPIFY_STOREFRONT_ACCESS_TOKEN` | Your Storefront API token (from `.env.local`) |
+| `NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN` | `gnnh16-hf.myshopify.com` (from your Shopify admin) |
+| `NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN` | Your Storefront API token (from `.env.local`) |
 
 ### 2. Important: Use Storefront API Token (Not Private Token)
 

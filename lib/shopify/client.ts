@@ -1,9 +1,9 @@
-const domain = process.env.SHOPIFY_STORE_DOMAIN;
-const token  = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
+const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
+const token  = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 
 if (!domain || !token) {
   throw new Error(
-    'Missing Shopify environment variables. Please set SHOPIFY_STORE_DOMAIN and SHOPIFY_STOREFRONT_ACCESS_TOKEN.'
+    'Missing Shopify environment variables. Please set NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN and NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN.'
   );
 }
 
