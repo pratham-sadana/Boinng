@@ -11,7 +11,6 @@ import { NextRequest, NextResponse } from 'next/server';
  *   firstName?: string
  *   lastName?: string
  *   phone?: string
- *   acceptsMarketing?: boolean
  * }
  * 
  * Response:
@@ -48,7 +47,6 @@ interface CustomerInput {
   firstName?: string;
   lastName?: string;
   phone?: string;
-  acceptsMarketing?: boolean;
 }
 
 interface CreateCustomerResponse {
@@ -99,7 +97,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { email, firstName, lastName, phone, acceptsMarketing } = body;
+    const { email, firstName, lastName, phone } = body;
 
     // Validate required fields
     if (!email) {
@@ -127,7 +125,6 @@ export async function POST(req: NextRequest) {
     if (firstName) customerInput.firstName = firstName.trim();
     if (lastName) customerInput.lastName = lastName.trim();
     if (phone) customerInput.phone = phone.trim();
-    if (acceptsMarketing !== undefined) customerInput.acceptsMarketing = acceptsMarketing;
 
     // Call Shopify Admin API
     const response = await shopifyAdminFetch<CreateCustomerResponse>(CREATE_CUSTOMER_MUTATION, {
