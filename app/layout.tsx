@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <CartProvider>
           <a href="#main-content" className="sr-only">Skip to content</a>
-          <AnnouncementBar />
+          {/* <AnnouncementBar /> */}
           <Navbar />
           <main id="main-content">
             {children}

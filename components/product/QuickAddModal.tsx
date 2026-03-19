@@ -13,19 +13,25 @@ interface QuickAddModalProps {
 }
 
 export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) {
-  const { addItem } = useCart();
+  const { addItem, isLoading } = useCart();
   const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0]);
+  const [isAdding, setIsAdding] = useState(false);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!selectedVariant) return;
-    addItem({
-      id: selectedVariant.id,
-      title: product.title,
-      quantity: 1,
-      price: parseFloat(selectedVariant.price.amount),
-      image: selectedVariant.image?.url || product.image?.url || '/logos/cropped.png',
-    });
-    onClose();
+    setIsAdding(true);
+    try {
+      await addItem({
+        id: selectedVariant.id,
+        title: product.title,
+        quantity: 1,
+        price: parseFloat(selectedVariant.price.amount),
+        image: selectedVariant.image?.url || product.image?.url || '/logos/cropped.png',
+      });
+      onClose();
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   return (
@@ -129,10 +135,10 @@ export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) 
                   onClick={handleAddToCart}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  disabled={!selectedVariant || !product.availableForSale}
+                  disabled={!selectedVariant || !product.availableForSale || isAdding || isLoading}
                   className="w-full bg-boinng-blue text-white py-3 rounded-full font-bold uppercase tracking-widest mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {!product.availableForSale ? 'Out of Stock' : 'Add to Cart'}
+                  {isAdding || isLoading ? 'Adding...' : !product.availableForSale ? 'Out of Stock' : 'Add to Cart'}
                 </motion.button>
               </div>
             </div>

@@ -7,11 +7,12 @@ import { TransformedProduct } from '@/lib/shopify/types';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export function ProductDetails({ product }: { product: TransformedProduct }) {
-  const { addItem } = useCart();
+  const { addItem, isLoading } = useCart();
   const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0]);
   const [expandedDescription, setExpandedDescription] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isClient, setIsClient] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   // Use variant image if available, otherwise use product images
   const displayImages = selectedVariant?.image
@@ -25,29 +26,6 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
 
   useEffect(() => {
     setIsClient(true);
-    console.log('🛍️ Shopify Product Fields:', {
-      id: product.id,
-      title: product.title,
-      handle: product.handle,
-      description: product.description?.substring(0, 100) + '...',
-      availableForSale: product.availableForSale,
-      price: product.price,
-      comparePrice: product.comparePrice,
-      currency: product.currency,
-      image: product.image,
-      imagesCount: product.images.length,
-      images: product.images.map(img => img.url.substring(0, 50) + '...'),
-      variantCount: product.variants.length,
-      variants: product.variants.map(v => ({
-        id: v.id,
-        title: v.title,
-        price: v.price,
-        compareAtPrice: v.compareAtPrice,
-        availableForSale: v.availableForSale,
-        image: v.image?.url?.substring(0, 50) + '...',
-      })),
-      tags: product.tags,
-    });
   }, [product]);
 
   const handleVariantChange = (variant: typeof product.variants[0]) => {
@@ -63,26 +41,44 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
     setSelectedImageIndex((prev) => (prev === displayImages.length - 1 ? 0 : prev + 1));
   };
 
-  const descriptionWords = product.description?.split(' ').length || 0;
+  // Strip HTML tags from description for safe plain-text rendering
+  const stripHtml = (html: string) => html.replace(/<[^>]*>/g, '');
+  const safeDescription = stripHtml(product.description || '');
   const wordLimit = 15;
-  const shouldTruncate = descriptionWords > wordLimit;
-  const truncatedDescription = product.description
-    ?.split(' ')
-    .slice(0, wordLimit)
-    .join(' ') + '...';
+  const shouldTruncate = safeDescription.split(' ').length > wordLimit;
+  const displayDescription = expandedDescription
+    ? safeDescription
+    : safeDescription.split(' ').slice(0, wordLimit).join(' ') + (shouldTruncate ? '...' : '');
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!selectedVariant) return;
-    addItem({
-      id: selectedVariant.id,
-      title: product.title,
-      quantity: 1,
-      price: parseFloat(selectedVariant.price.amount),
-      image: selectedVariant.image?.url || product.image?.url || '/logos/cropped.png',
-    });
+    setIsAdding(true);
+    try {
+      await addItem({
+        id: selectedVariant.id,
+        title: product.title,
+        quantity: 1,
+        price: parseFloat(selectedVariant.price.amount),
+        image: selectedVariant.image?.url || product.image?.url || '/logos/cropped.png',
+      });
+    } finally {
+      setIsAdding(false);
+    }
   };
 
-  if (!isClient) return null;
+  if (!isClient) {
+    return (
+      <div className="grid md:grid-cols-2 gap-8 lg:gap-16 items-start animate-pulse">
+        <div className="rounded-2xl bg-black/5 aspect-square w-full" />
+        <div className="flex flex-col gap-6 pt-2">
+          <div className="h-12 bg-black/5 rounded-xl w-3/4" />
+          <div className="h-10 bg-black/5 rounded-xl w-1/3" />
+          <div className="h-24 bg-black/5 rounded-xl w-full" />
+          <div className="h-14 bg-boinng-blue/20 rounded-full w-full" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid md:grid-cols-2 gap-8 lg:gap-16 items-start">
@@ -197,10 +193,9 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
         </motion.div>
 
         <motion.div className="mb-8">
-          <div
-            className="prose prose-lg max-w-none mb-4 text-black/70 leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: expandedDescription ? product.description : truncatedDescription }}
-          />
+          <p className="prose prose-lg max-w-none mb-4 text-black/70 leading-relaxed whitespace-pre-wrap">
+            {displayDescription}
+          </p>
           {shouldTruncate && (
             <button
               onClick={() => setExpandedDescription(!expandedDescription)}
@@ -238,10 +233,10 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
           onClick={handleAddToCart}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          disabled={!selectedVariant || !product.availableForSale}
+          disabled={!selectedVariant || !product.availableForSale || isAdding || isLoading}
           className="w-full bg-boinng-blue text-white py-4 rounded-full font-bold uppercase tracking-widest text-lg shadow-lg hover:shadow-xl transition-shadow disabled:opacity-50 disabled:cursor-not-allowed mb-4"
         >
-          {!product.availableForSale ? 'Out of Stock' : 'Add to Cart'}
+          {isAdding || isLoading ? 'Adding...' : !product.availableForSale ? 'Out of Stock' : 'Add to Cart'}
         </motion.button>
 
         <div className="grid grid-cols-2 gap-3 mb-8">

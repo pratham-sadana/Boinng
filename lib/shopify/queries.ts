@@ -284,3 +284,58 @@ export const GET_CART = `
     }
   }
 `;
+
+// ─── Product Search ─────────────────────────────────────────────────────────
+
+export const SEARCH_PRODUCTS = `
+  query SearchProducts($query: String!, $first: Int = 10) {
+    search(first: $first, query: $query, types: PRODUCT) {
+      edges {
+        node {
+          ... on Product {
+            id
+            title
+            handle
+            availableForSale
+            vendor
+            priceRange {
+              minVariantPrice { amount currencyCode }
+            }
+            compareAtPriceRange {
+              minVariantPrice { amount currencyCode }
+            }
+            featuredImage { url altText width height }
+            tags
+            variants(first: 1) {
+              edges {
+                node {
+                  id
+                  price { amount currencyCode }
+                  compareAtPrice { amount currencyCode }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+// ─── Navigation Menu ────────────────────────────────────────────────────────
+
+export const NAVIGATION_MENU_QUERY = `
+  query NavigationMenu($handle: String!) {
+    menu(handle: $handle) {
+      title
+      items {
+        title
+        url
+        items {
+          title
+          url
+        }
+      }
+    }
+  }
+`;

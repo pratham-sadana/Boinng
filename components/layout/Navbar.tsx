@@ -2,11 +2,20 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Search } from 'lucide-react';
 import { CartPanel } from '@/components/cart/CartPanel';
+import { SearchModal } from '@/components/layout/SearchModal';
 import { MobileMenu } from '@/components/layout/MobileMenu';
 import { useCart } from '@/lib/cart/context';
 
-const NAV_LINKS = [
+interface NavLink {
+  label: string;
+  href: string;
+  submenu?: NavLink[];
+}
+
+// Fallback menu in case API fails
+const FALLBACK_NAV_LINKS: NavLink[] = [
   { label: 'Christmas',    href: '/collections/christmas' },
   { label: 'New Arrivals', href: '/collections/new-arrivals' },
   { label: 'Sale',         href: '/collections/sale' },
@@ -16,10 +25,36 @@ const NAV_LINKS = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [activeLink, setActiveLink] = useState<string | null>(null);
+  const [navLinks, setNavLinks] = useState<NavLink[]>(FALLBACK_NAV_LINKS);
+  const [isLoadingMenu, setIsLoadingMenu] = useState(true);
   const { openCart, items } = useCart();
 
-  const cartCount = items.length;
+  const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  // Fetch dynamic menu from Shopify
+  useEffect(() => {
+    const fetchMenu = async () => {
+      try {
+        const response = await fetch('/api/menu', {
+          next: { revalidate: 3600 }, // Cache for 1 hour
+        });
+        const data = await response.json();
+        
+        if (data.menu?.items && data.menu.items.length > 0) {
+          setNavLinks(data.menu.items);
+        }
+      } catch (error) {
+        console.warn('Failed to fetch dynamic menu, using fallback:', error);
+        // Keep fallback menu on error
+      } finally {
+        setIsLoadingMenu(false);
+      }
+    };
+
+    fetchMenu();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -72,7 +107,7 @@ export function Navbar() {
 
           {/* Desktop nav */}
           <ul className="hidden md:flex items-center gap-1" role="list">
-            {NAV_LINKS.map((l, i) => (
+            {navLinks.map((l, i) => (
               <li key={l.href}>
                 <Link
                   href={l.href}
@@ -107,13 +142,11 @@ export function Navbar() {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
+              onClick={() => setSearchOpen(true)}
               className="hidden md:flex p-2 text-boinng-black/50 hover:text-boinng-blue transition-colors"
               aria-label="Search"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
+              <Search size={18} />
             </motion.button>
 
             {/* Cart */}
@@ -147,13 +180,6 @@ export function Navbar() {
               </AnimatePresence>
             </motion.button>
 
-            {/* Shop Now CTA — desktop
-            <Link
-              href="/collections/all"
-              className="hidden md:block ml-1 px-5 py-2.5 font-display text-xs font-bold tracking-[0.18em] uppercase bg-boinng-blue text-[#FFFEFA] hover:bg-boinng-black transition-colors duration-200"
-            >
-              Shop Now →
-            </Link> */}
 
             {/* Burger — mobile */}
             <button
@@ -183,6 +209,7 @@ export function Navbar() {
       </motion.nav>
 
       <MobileMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       <CartPanel />
     </>
   );

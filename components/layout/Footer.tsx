@@ -24,10 +24,41 @@ const LINKS = {
 export function Footer() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) setSubmitted(true);
+    if (!email) return;
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Subscription failed');
+      }
+
+      setSubmitted(true);
+      setEmail('');
+      
+      // Reset after 3 seconds so they can sign up again if they want
+      setTimeout(() => {
+        setSubmitted(false);
+      }, 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Newsletter signup error:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -102,7 +133,15 @@ export function Footer() {
                   animate={{ opacity: 1, y: 0 }}
                   className="text-xs font-bold uppercase tracking-widest text-boinng-blue"
                 >
-                  You're in.
+                  You're in. 🎉
+                </motion.p>
+              ) : error ? (
+                <motion.p
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-xs font-bold uppercase tracking-widest text-red-400"
+                >
+                  {error}
                 </motion.p>
               ) : (
                 <form onSubmit={handleSubmit} className="flex gap-0 border-b border-white/20 focus-within:border-[#FFFEFA] transition-colors">
@@ -113,12 +152,14 @@ export function Footer() {
                     placeholder="YOUR EMAIL"
                     className="flex-1 bg-transparent py-3 text-xs font-bold tracking-widest text-boinng-blue placeholder:text-white/20 focus:outline-none"
                     required
+                    disabled={isLoading}
                   />
                   <button
                     type="submit"
-                    className="py-3 px-2 text-xs font-bold text-boinng-blue hover:text-[#FFFEFA] transition-colors tracking-widest"
+                    disabled={isLoading}
+                    className="py-3 px-2 text-xs font-bold text-boinng-blue hover:text-[#FFFEFA] transition-colors tracking-widest disabled:opacity-50"
                   >
-                    →
+                    {isLoading ? '⏳' : '→'}
                   </button>
                 </form>
               )}

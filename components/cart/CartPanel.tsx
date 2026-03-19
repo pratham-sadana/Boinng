@@ -1,20 +1,38 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Plus, Minus } from 'lucide-react';
 import { useState } from 'react';
 import { useCart } from '@/lib/cart/context';
 
 export function CartPanel() {
-  const { isOpen, closeCart, items, removeItem } = useCart();
+  const { isOpen, closeCart, items, removeItem, updateItemQuantity, checkoutUrl, isLoading } = useCart();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
+  const handleRemove = async (itemId: string) => {
+    await removeItem(itemId);
+  };
+
+  const handleQuantityChange = async (itemId: string, newQuantity: number) => {
+    if (newQuantity <= 0) {
+      await removeItem(itemId);
+    } else {
+      await updateItemQuantity(itemId, newQuantity);
+    }
+  };
+
   const handleCheckout = async () => {
-    if (items.length === 0) return;
+    if (items.length === 0 || isCheckingOut) return;
     
     setIsCheckingOut(true);
     try {
-      // Call server-side API to create checkout
+      // If we have a checkoutUrl from Shopify cart sync, use it directly
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+        return;
+      }
+
+      // Fallback to server-side API for legacy carts
       const response = await fetch('/api/cart/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -79,17 +97,44 @@ export function CartPanel() {
             </div>
 
             {items.length > 0 ? (
-              <div className="flex-1 overflow-y-auto p-6">
+              <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {items.map(item => (
-                  <div key={item.id} className="flex gap-4 mb-4">
-                    <img src={item.image} alt={item.title} className="w-24 h-24 object-cover rounded-md" />
-                    <div className="flex-1">
-                      <h3 className="font-bold">{item.title}</h3>
-                      <p className="text-sm text-black/60">Qty: {item.quantity}</p>
-                      <p className="font-semibold">₹{item.price.toFixed(2)}</p>
+                  <div key={item.id} className="flex gap-4 p-4 bg-black/2 rounded-lg">
+                    <img src={item.image} alt={item.title} className="w-20 h-20 object-cover rounded-md" />
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-bold text-sm">{item.title}</h3>
+                        <p className="font-semibold text-sm text-boinng-blue">₹{item.price.toFixed(2)}</p>
+                      </div>
+                      
+                      {/* Quantity Controls */}
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                          disabled={isLoading}
+                          className="p-1 rounded border border-black/20 hover:border-boinng-blue hover:bg-boinng-blue/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                          title={item.quantity === 1 ? 'Remove from cart' : 'Decrease quantity'}
+                        >
+                          <Minus size={14} />
+                        </button>
+                        <span className="w-8 text-center font-bold text-sm">{item.quantity}</span>
+                        <button
+                          onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                          disabled={isLoading}
+                          className="p-1 rounded border border-black/20 hover:border-boinng-blue hover:bg-boinng-blue/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        >
+                          <Plus size={14} />
+                        </button>
+                      </div>
                     </div>
-                    <button onClick={() => removeItem(item.id)} className="text-red-500 hover:text-red-700">
-                      Remove
+                    
+                    <button 
+                      onClick={() => handleRemove(item.id)} 
+                      className="text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      disabled={isLoading}
+                      title="Remove from cart"
+                    >
+                      <X size={18} />
                     </button>
                   </div>
                 ))}
@@ -119,4 +164,3 @@ export function CartPanel() {
     </AnimatePresence>
   );
 }
-// hello

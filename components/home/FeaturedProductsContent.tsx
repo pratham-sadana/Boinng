@@ -27,7 +27,9 @@ const itemVars: Variants = {
   show: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', bounce: 0.4 } }
 };
 
-function ProductCard({ product, onQuickAdd }: { product: any; onQuickAdd: () => void }) {
+import type { Product } from '@/lib/shopify/types';
+
+function ProductCard({ product, onQuickAdd }: { product: Product; onQuickAdd: () => void }) {
   const transformed = transformProduct(product);
   const displayPrice = formatMoney(transformed.price);
   const comparePrice = transformed.comparePrice && parseFloat(transformed.comparePrice) > 0 ? formatMoney(transformed.comparePrice) : null;
@@ -105,7 +107,7 @@ function ProductCard({ product, onQuickAdd }: { product: any; onQuickAdd: () => 
   );
 }
 
-export function FeaturedProductsContent({ title, products }: { title: string; products: any[] }) {
+export function FeaturedProductsContent({ title, products }: { title: string; products: Product[] }) {
   const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
 
   return (
