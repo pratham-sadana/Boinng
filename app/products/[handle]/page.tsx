@@ -1,5 +1,6 @@
 import { getProduct, transformProduct } from '@/lib/shopify/api';
 import { notFound } from 'next/navigation';
+import Script from 'next/script';
 import { ProductDetails } from '@/components/product/ProductDetails';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
 
@@ -45,6 +46,34 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
 
   return (
     <main className="bg-[#FFFEFA] min-h-screen">
+      {/* JSON-LD Schema for Product */}
+      <Script
+        id="product-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org/',
+            '@type': 'Product',
+            name: transformedProduct.title,
+            description: transformedProduct.description,
+            image: transformedProduct.images.map((img) => img.url),
+            brand: {
+              '@type': 'Brand',
+              name: 'BOINNG!',
+            },
+            offers: {
+              '@type': 'Offer',
+              url: `https://boinng.com/products/${resolvedParams.handle}`,
+              priceCurrency: transformedProduct.currency || 'INR',
+              price: transformedProduct.price,
+              availability: transformedProduct.availableForSale
+                ? 'https://schema.org/InStock'
+                : 'https://schema.org/OutOfStock',
+            },
+            url: `https://boinng.com/products/${resolvedParams.handle}`,
+          }),
+        }}
+      />
 
       {/* Product details */}
       <div className="max-w-[1400px] mx-auto px-4 md:px-10 pt-10 pb-16">

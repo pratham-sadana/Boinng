@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+import Script from 'next/script';
 import { Hero }             from '@/components/home/Hero';
 import { Marquee }          from '@/components/layout/Marquee';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
@@ -14,6 +15,32 @@ const FinalCTA      = dynamic(() => import('@/components/home/FinalCTA').then(m 
 export default function HomePage() {
   return (
     <>
+      {/* JSON-LD Schema for Organization */}
+      <Script
+        id="organization-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'BOINNG!',
+            url: 'https://boinng.com',
+            logo: 'https://boinng.com/logos/cropped.png',
+            description: "BOINNG! is India's boldest streetwear brand. Limited drops, premium quality, zero compromise.",
+            sameAs: [
+              'https://instagram.com/boinng',
+              'https://twitter.com/boinng',
+              'https://facebook.com/boinng',
+            ],
+            contactPoint: {
+              '@type': 'ContactPoint',
+              contactType: 'Customer Service',
+              url: 'https://boinng.com/pages/contact',
+            },
+          }),
+        }}
+      />
+
       {/* 1. Hero — first impression, scroll-scrub video */}
       <Hero />
 
