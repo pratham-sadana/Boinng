@@ -3,8 +3,11 @@ import {
   COLLECTION_QUERY,
   PRODUCT_QUERY,
   FEATURED_PRODUCTS_QUERY,
+  FEATURED_COLLECTIONS_QUERY,
+  ALL_COLLECTIONS_QUERY,
+  ALL_PRODUCTS_QUERY,
 } from './queries';
-import type { Product, Collection, TransformedProduct } from './types';
+import type { Product, Collection, TransformedProduct, CollectionPreview } from './types';
 
 /**
  * Fetch products from a Shopify collection by handle.
@@ -171,4 +174,71 @@ export function transformProduct(product: Product): TransformedProduct {
     variants: product.variants.edges.map((e) => e.node),
     tags: product.tags,
   };
+}
+
+/**
+ * Fetch featured collections from the store (limited to 6).
+ */
+export async function getFeaturedCollections(
+  limit: number = 6
+): Promise<CollectionPreview[]> {
+  try {
+    const response = await shopifyFetch<{
+      collections: { edges: Array<{ node: CollectionPreview }> };
+    }>({
+      query: FEATURED_COLLECTIONS_QUERY,
+      variables: {
+        first: limit,
+      },
+    });
+
+    return response.collections.edges.map((edge) => edge.node);
+  } catch (error) {
+    console.error('Error fetching featured collections:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch all collections from the store.
+ */
+export async function getAllCollections(): Promise<CollectionPreview[]> {
+  try {
+    const response = await shopifyFetch<{
+      collections: { edges: Array<{ node: CollectionPreview }> };
+    }>({
+      query: ALL_COLLECTIONS_QUERY,
+      variables: {
+        first: 50,
+      },
+    });
+
+    return response.collections.edges.map((edge) => edge.node);
+  } catch (error) {
+    console.error('Error fetching all collections:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch all products from the store.
+ */
+export async function getAllProducts(
+  limit: number = 100
+): Promise<Product[]> {
+  try {
+    const response = await shopifyFetch<{
+      products: { edges: Array<{ node: Product }> };
+    }>({
+      query: ALL_PRODUCTS_QUERY,
+      variables: {
+        first: limit,
+      },
+    });
+
+    return response.products.edges.map((edge) => edge.node);
+  } catch (error) {
+    console.error('Error fetching all products:', error);
+    return [];
+  }
 }

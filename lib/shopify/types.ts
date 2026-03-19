@@ -82,6 +82,15 @@ export type Collection = {
   products: { edges: { node: Product }[] };
 };
 
+export type CollectionPreview = {
+  id: string;
+  title: string;
+  handle: string;
+  description: string;
+  image?: ShopifyImage;
+  products?: { edges: { node: { id: string; title: string } }[] };
+};
+
 // ─── Cart ────────────────────────────────────────────────────────────────────
 
 export type CartLineMerchandise = {
@@ -149,6 +158,14 @@ export type GetCartResponse = {
 
 export type CollectionResponse = {
   collection: Collection | null;
+};
+
+export type FeaturedCollectionsResponse = {
+  collections: { edges: { node: CollectionPreview }[] };
+};
+
+export type AllCollectionsResponse = {
+  collections: { edges: { node: CollectionPreview }[] };
 };
 
 export type ProductResponse = {

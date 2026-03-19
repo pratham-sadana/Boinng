@@ -66,7 +66,7 @@ export function FinalCTA() {
           <div
             className="flex-1 flex justify-center md:justify-end"
           >
-            <Link href="/collections/all">
+            <Link href="/shop">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

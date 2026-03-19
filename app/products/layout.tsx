@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 
-export async function generateMetadata({ params }: { params: { handle: string } }): Promise<Metadata> {
-  const handle = params.handle;
-  const baseUrl = 'https://boinng.com';
+export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }): Promise<Metadata> {
+  const resolvedParams = await params;
+  const handle = resolvedParams?.handle || 'product';
+  const baseUrl = 'https://boinng.in';
   
   // Format handle to title (bold-tee -> Bold Tee)
   const formattedTitle = handle

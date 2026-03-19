@@ -14,12 +14,18 @@ interface NavLink {
   submenu?: NavLink[];
 }
 
-// Fallback menu in case API fails
 const FALLBACK_NAV_LINKS: NavLink[] = [
-  { label: 'fallback',    href: '/collections/christmas' },
-  { label: 'not working', href: '/collections/new-arrivals' },
+  { label: 'Shop All',     href: '/shop' },
+  { label: 'Collections',  href: '/collections' },
   { label: 'Sale',         href: '/collections/sale' },
-  { label: 'Valentines',   href: '/collections/valentines' },
+  { label: 'New Arrivals', href: '/collections/new-arrivals' },
+];
+
+const FALLBACK_ANNOUNCEMENTS = [
+  '🎉 Free shipping over ₹799',
+  '✨ New drops every Friday',
+  '🇮🇳 Proudly made in India',
+  '🛍️ Easy returns within 7 days',
 ];
 
 export function Navbar() {
@@ -29,6 +35,8 @@ export function Navbar() {
   const [activeLink, setActiveLink] = useState<string | null>(null);
   const [navLinks, setNavLinks] = useState<NavLink[]>(FALLBACK_NAV_LINKS);
   const [isLoadingMenu, setIsLoadingMenu] = useState(true);
+  const [announcements, setAnnouncements] = useState<string[]>(FALLBACK_ANNOUNCEMENTS);
+  const [announcementIndex, setAnnouncementIndex] = useState(0);
   const { openCart, items } = useCart();
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -37,26 +45,48 @@ export function Navbar() {
     window.scrollTo(0, 0);
   };
 
+  // Fetch dynamic announcements from Shopify
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const response = await fetch('/api/announcements');
+        const data = await response.json();
+        if (data.announcements && data.announcements.length > 0) {
+          setAnnouncements(data.announcements);
+        }
+      } catch (error) {
+        console.warn('Failed to fetch announcements, using fallback:', error);
+      }
+    };
+    fetchAnnouncements();
+  }, []);
+
+  // Rotate announcements every 5 seconds
+  useEffect(() => {
+    if (announcements.length <= 1) return;
+    const interval = setInterval(() => {
+      setAnnouncementIndex((prev) => (prev + 1) % announcements.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [announcements]);
+
   // Fetch dynamic menu from Shopify
   useEffect(() => {
     const fetchMenu = async () => {
       try {
         const response = await fetch('/api/menu', {
-          next: { revalidate: 3600 }, // Cache for 1 hour
+          next: { revalidate: 3600 },
         });
         const data = await response.json();
-        
         if (data.menu?.items && data.menu.items.length > 0) {
           setNavLinks(data.menu.items);
         }
       } catch (error) {
         console.warn('Failed to fetch dynamic menu, using fallback:', error);
-        // Keep fallback menu on error
       } finally {
         setIsLoadingMenu(false);
       }
     };
-
     fetchMenu();
   }, []);
 
@@ -75,9 +105,20 @@ export function Navbar() {
         transition={{ duration: 0.4, delay: 0.2 }}
         className="bg-boinng-blue text-[#FFFEFA] overflow-hidden"
       >
-        <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-center py-2 px-4">
-          🎉 Free shipping over ₹799 &nbsp;·&nbsp; New drops every Friday &nbsp;·&nbsp; Made in India 🇮🇳
-        </p>
+        <div className="relative flex items-center justify-center py-2 px-4 h-7 overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={announcementIndex}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.35, ease: 'easeInOut' }}
+              className="absolute text-[10px] font-bold tracking-[0.25em] uppercase text-center whitespace-nowrap"
+            >
+              {announcements[announcementIndex]}
+            </motion.p>
+          </AnimatePresence>
+        </div>
       </motion.div>
 
       <motion.nav
@@ -111,7 +152,7 @@ export function Navbar() {
 
           {/* Desktop nav */}
           <ul className="hidden md:flex items-center gap-1" role="list">
-            {navLinks.map((l, i) => (
+            {navLinks.map((l) => (
               <li key={l.href}>
                 <Link
                   href={l.href}
@@ -120,15 +161,7 @@ export function Navbar() {
                   onMouseLeave={() => setActiveLink(null)}
                   className="relative px-4 py-2 text-xs font-bold tracking-[0.18em] text-boinng-black uppercase hover:text-boinng-blue transition-colors duration-200 flex items-center gap-1.5"
                 >
-                  {/* Sale badge
-                  {l.label === 'Sale' && (
-                    <span className="inline-block bg-red-500 text-white text-[8px] font-black tracking-widest px-1.5 py-0.5 rounded-sm uppercase">
-                      HOT
-                    </span>
-                  )}*/}
                   {l.label}
-
-                  {/* Animated underline */}
                   <motion.span
                     className="absolute bottom-0 left-4 right-4 h-[2px] bg-boinng-blue rounded-full origin-left"
                     initial={{ scaleX: 0 }}
@@ -185,7 +218,6 @@ export function Navbar() {
               </AnimatePresence>
             </motion.button>
 
-
             {/* Burger — mobile */}
             <button
               className="flex flex-col gap-[5px] p-1.5 md:hidden z-50 relative w-9 h-9 justify-center items-center ml-1"
@@ -213,7 +245,7 @@ export function Navbar() {
         </div>
       </motion.nav>
 
-      <MobileMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+      <MobileMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} navLinks={navLinks} />
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       <CartPanel />
     </>

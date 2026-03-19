@@ -6,11 +6,10 @@ import { useState } from 'react';
 
 const LINKS = {
   COLLECTIONS: [
-    { label: 'All Socks', href: '/collections' },
+    { label: 'Shop All Products', href: '/shop' },
+    { label: 'All Collections', href: '/collections' },
     { label: 'New Arrivals', href: '/collections/new-arrivals' },
     { label: 'Best Sellers', href: '/collections/best-sellers' },
-    { label: 'Christmas', href: '/collections/christmas' },
-    { label: 'Valentines', href: '/collections/valentines' },
     { label: 'Sale', href: '/collections/sale' },
   ],
   INFORMATION: [

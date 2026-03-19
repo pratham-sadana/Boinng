@@ -2,6 +2,7 @@ import { Hero }             from '@/components/home/Hero';
 import { Marquee }          from '@/components/layout/Marquee';
 import { Features }         from '@/components/home/Features';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
+import { FeaturedCollections } from '@/components/home/FeaturedCollections';
 import { Testimonials }     from '@/components/home/Testimonials';
 import { InstagramFeed }    from '@/components/home/InstagramFeed';
 import { FinalCTA }         from '@/components/home/FinalCTA';
@@ -29,6 +30,9 @@ export default function HomePage() {
         collectionHandle="new-arrivals"
         limit={4}
       />
+
+      {/* Featured Collections */}
+      <FeaturedCollections limit={6} />
 
       {/* Why BOINNG! feature grid */}
       <Features />

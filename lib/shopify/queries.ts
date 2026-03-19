@@ -123,6 +123,91 @@ export const FEATURED_PRODUCTS_QUERY = `
   }
 `;
 
+// ─── Featured Collections (Homepage) ────────────────────────────────────────
+
+export const FEATURED_COLLECTIONS_QUERY = `
+  query FeaturedCollections($first: Int = 6) {
+    collections(first: $first) {
+      edges {
+        node {
+          id
+          title
+          handle
+          description
+          image { url altText width height }
+        }
+      }
+    }
+  }
+`;
+
+// ─── All Collections ────────────────────────────────────────────────────────
+
+export const ALL_COLLECTIONS_QUERY = `
+  query AllCollections($first: Int = 50) {
+    collections(first: $first, sortKey: TITLE) {
+      edges {
+        node {
+          id
+          title
+          handle
+          description
+          image { url altText width height }
+          products(first: 1) {
+            edges {
+              node {
+                id
+                title
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+// ─── All Products (Shop Page) ───────────────────────────────────────────────
+
+export const ALL_PRODUCTS_QUERY = `
+  query AllProducts($first: Int = 100) {
+    products(first: $first) {
+      edges {
+        node {
+          id
+          title
+          handle
+          description
+          availableForSale
+          options { name values }
+          priceRange {
+            minVariantPrice { amount currencyCode }
+          }
+          compareAtPriceRange {
+            minVariantPrice { amount currencyCode }
+          }
+          featuredImage { url altText width height }
+          images(first: 10) { edges { node { url altText width height } } }
+          tags
+          variants(first: 10) {
+            edges {
+              node {
+                id
+                title
+                availableForSale
+                price { amount currencyCode }
+                compareAtPrice { amount currencyCode }
+                selectedOptions { name value }
+                image { url altText width height }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 // ─── Cart Mutations ──────────────────────────────────────────────────────────
 
 export const CREATE_CART = `

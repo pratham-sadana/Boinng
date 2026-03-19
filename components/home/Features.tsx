@@ -82,27 +82,27 @@ export function Features() {
       <div className="max-w-[1400px] mx-auto px-4 md:px-10">
 
         <div
-          className="flex flex-col lg:flex-row gap-12 justify-between items-center mb-20 ml-32"
+          className="flex flex-col lg:flex-row gap-8 md:gap-12 justify-between items-start md:items-center mb-16 md:mb-20 lg:ml-32"
         >
-          <div className="flex-1">
-            <h2 className="font-display text-[clamp(2.5rem,6vw,4rem)] leading-tight text-boinng-black uppercase tracking-widest">
+          <div className="flex-1 w-full">
+            <h2 className="font-display text-[clamp(1.75rem,5vw,4rem)] md:text-[clamp(2.5rem,6vw,4rem)] leading-tight text-boinng-black uppercase tracking-widest">
               BUILT ON<br/>QUALITY &<br/><span className="text-boinng-blue">INTEGRITY</span>
             </h2>
-            <p className="font-medium text-base tracking-wide text-boinng-black/70 max-w-lg mt-6 leading-relaxed">
+            <p className="font-medium text-sm md:text-base tracking-wide text-boinng-black/70 mt-4 md:mt-6 leading-relaxed">
               We stand behind every pair. Our commitment to quality means rigorous testing, ethical sourcing, and unwavering customer support.
             </p>
           </div>
 
-          <div className="flex-1">
+          <div className="flex-1 w-full">
             <ul
-              className="space-y-4"
+              className="space-y-3 md:space-y-4"
             >
               {QUALITY_POINTS.map((point, i) => (
                 <motion.li
                   key={i}
                   custom={i}
                   variants={statsVariants}
-                  className="flex items-start ml-28 gap-4"
+                  className="flex items-start gap-3 md:gap-4 lg:ml-28"
                 >
                   <span className="flex-shrink-0 w-6 h-6 rounded-full bg-boinng-blue text-white flex items-center justify-center text-sm font-bold mt-1">
                     ✓

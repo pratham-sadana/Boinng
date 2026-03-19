@@ -4,18 +4,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import Link from 'next/link';
 
+interface NavLink {
+  label: string;
+  href: string;
+  submenu?: NavLink[];
+}
+
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  navLinks: NavLink[];
 }
 
-const NAV_LINKS = [
-  { label: 'Collections', href: '/collections/all' },
-  { label: 'New Arrivals', href: '/collections/new-arrivals' },
-  { label: 'Sale', href: '/collections/sale' },
-];
-
-export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+export function MobileMenu({ isOpen, onClose, navLinks }: MobileMenuProps) {
   const handleNavigation = () => {
     window.scrollTo(0, 0);
     onClose();
@@ -52,7 +53,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </button>
 
             <nav className="flex flex-col gap-6">
-              {NAV_LINKS.map((link) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
