@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       // Check response status first
       if (!customerResponse.ok) {
         const responseText = await customerResponse.text();
-        console.error(`⚠️ Customer creation failed with status ${customerResponse.status}:`, responseText.substring(0, 200));
+        console.error(`⚠️ Customer creation failed with status ${customerResponse.status}:`, responseText.substring(0, 500));
       } else {
         const result = await customerResponse.json();
 
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
           console.log(`✅ Customer created: ${result.customer.id}`);
           customerCreated = true;
         } else {
-          console.warn(`⚠️ Customer creation skipped: ${result.message}`);
+          console.warn(`⚠️ Customer creation skipped: ${result.message}`, result.errors ? JSON.stringify(result.errors) : '');
         }
       }
     } catch (customerError) {

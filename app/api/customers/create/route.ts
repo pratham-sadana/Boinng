@@ -134,9 +134,24 @@ export async function POST(req: NextRequest) {
       input: customerInput,
     });
 
+    console.log('[/api/customers/create] Shopify response:', JSON.stringify(response, null, 2));
+
+    // Handle GraphQL errors
+    if (response.errors) {
+      console.error('[/api/customers/create] GraphQL errors:', response.errors);
+      return NextResponse.json(
+        {
+          success: false,
+          message: response.errors[0]?.message || 'GraphQL error',
+        },
+        { status: 400 }
+      );
+    }
+
     // Handle errors from Shopify
     const errors = response.data?.customerCreate?.userErrors;
     if (errors && errors.length > 0) {
+      console.error('[/api/customers/create] User errors:', errors);
       return NextResponse.json(
         {
           success: false,
@@ -149,6 +164,7 @@ export async function POST(req: NextRequest) {
 
     const customer = response.data?.customerCreate?.customer;
     if (!customer) {
+      console.error('[/api/customers/create] No customer returned, full response:', JSON.stringify(response, null, 2));
       return NextResponse.json(
         { success: false, message: 'Failed to create customer' },
         { status: 400 }
