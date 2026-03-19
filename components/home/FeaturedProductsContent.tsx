@@ -208,7 +208,7 @@ export function FeaturedProductsContent({ title, products }: { title: string; pr
   };
 
   return (
-    <section ref={sectionRef} className="py-10 md:py-14 bg-[#FFFEFA] overflow-hidden">
+    <section ref={sectionRef} className="py-10 md:py-14 bg-[#FFFEFA] overflow-hidden -mx-4 sm:-mx-0 md:mx-0 px-4 sm:px-0 md:px-0">
       <div className="max-w-[1400px] mx-auto">
 
         {/* Header */}
@@ -262,13 +262,13 @@ export function FeaturedProductsContent({ title, products }: { title: string; pr
             transition={{ duration: 0.4 }}
             className="relative"
           >
-            {/* Fade edges */}
-            <div className={`absolute left-0 top-0 bottom-4 w-10 bg-gradient-to-r from-[#FFFEFA] to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollLeft ? 'opacity-100' : 'opacity-0'}`} />
-            <div className={`absolute right-0 top-0 bottom-4 w-10 bg-gradient-to-l from-[#FFFEFA] to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollRight ? 'opacity-100' : 'opacity-0'}`} />
+            {/* Fade edges — hidden on mobile */}
+            <div className={`hidden md:block absolute left-0 top-0 bottom-4 w-10 bg-gradient-to-r from-[#FFFEFA] to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollLeft ? 'opacity-100' : 'opacity-0'}`} />
+            <div className={`hidden md:block absolute right-0 top-0 bottom-4 w-10 bg-gradient-to-l from-[#FFFEFA] to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollRight ? 'opacity-100' : 'opacity-0'}`} />
 
             <div
               ref={scrollRef}
-              className="flex gap-3 overflow-x-auto px-4 md:px-10 pb-3 snap-x snap-mandatory"
+              className="flex gap-3 overflow-x-auto px-0 sm:px-4 md:px-10 pb-3 snap-x snap-mandatory"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {products.map((p, idx) => (

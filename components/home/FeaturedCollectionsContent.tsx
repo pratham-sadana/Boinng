@@ -29,8 +29,9 @@ export function FeaturedCollectionsContent({
   if (visible.length === 0) return null;
 
   return (
-    <section ref={ref} className="py-10 md:py-14 bg-[#FFFEFA] overflow-hidden">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-10">
+    <section ref={ref} className="py-10 md:py-14 bg-[#FFFEFA] overflow-hidden -mx-4 sm:-mx-0 md:mx-0 px-4 sm:px-0 md:px-0">
+      <div className="max-w-full px-0 sm:px-3 md:px-10">
+        <div className="max-w-[1400px] mx-auto">
 
         {/* Header */}
         <motion.div
@@ -52,13 +53,14 @@ export function FeaturedCollectionsContent({
         </motion.div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
           {visible.map((collection, index) => (
             <CollectionCard key={collection.handle} collection={collection} index={index} inView={inView} />
           ))}
         </div>
 
       </div>
+    </div>
     </section>
   );
 }
