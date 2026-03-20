@@ -78,7 +78,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const data = await response.json();
 
       if (!response.ok) {
-        console.error('API cart creation error:', data.error || data.userErrors);
         return null;
       }
 
@@ -105,7 +104,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       return newCartId;
     } catch (error) {
-      console.error('Failed to create Shopify cart:', error);
       return null;
     }
   };
@@ -123,7 +121,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const data = await response.json();
 
       if (!response.ok) {
-        console.error('API add to cart error:', data.error || data.userErrors);
         return;
       }
 
@@ -146,7 +143,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         );
       }
     } catch (error) {
-      console.error('Failed to add item to Shopify cart:', error);
+      // ignore error
     }
   };
 
@@ -163,7 +160,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const data = await response.json();
 
       if (!response.ok) {
-        console.error('API remove from cart error:', data.error || data.userErrors);
         return;
       }
 
@@ -171,7 +167,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setCheckoutUrl(data.cart.checkoutUrl);
       }
     } catch (error) {
-      console.error('Failed to remove item from Shopify cart:', error);
+      // ignore error
     }
   };
 
@@ -188,7 +184,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const data = await response.json();
 
       if (!response.ok) {
-        console.error('API update cart error:', data.error || data.userErrors);
         return;
       }
 
@@ -196,7 +191,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setCheckoutUrl(data.cart.checkoutUrl);
       }
     } catch (error) {
-      console.error('Failed to update cart quantity in Shopify:', error);
+      // ignore error
     }
   };
 

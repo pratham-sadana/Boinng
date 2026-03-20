@@ -15,8 +15,8 @@ interface NavLink {
 }
 
 const FALLBACK_NAV_LINKS: NavLink[] = [
-  { label: 'fallback',    href: '/collections/christmas' },
-  { label: 'not working', href: '/collections/new-arrivals' },
+  { label: 'New Arrivals', href: '/collections/new-arrivals' },
+  { label: 'Best Sellers', href: '/collections/best-sellers' },
   { label: 'Sale',         href: '/collections/sale' },
   { label: 'Valentines',   href: '/collections/valentines' },
 ];

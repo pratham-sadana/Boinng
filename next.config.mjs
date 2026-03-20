@@ -9,10 +9,6 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '**.shopify.com',
-      },
-      {
-        protocol: 'https',
         hostname: 'via.placeholder.com',
       },
     ],

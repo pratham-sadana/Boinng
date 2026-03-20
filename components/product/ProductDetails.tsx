@@ -33,7 +33,7 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
 
   const currentImage = displayImages[selectedImageIndex];
 
-  useEffect(() => { setIsClient(true); }, [product]);
+  useEffect(() => { setIsClient(true); }, []);
 
   const handleVariantChange = (variant: typeof product.variants[0]) => {
     setSelectedVariant(variant);
