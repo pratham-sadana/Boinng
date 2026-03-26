@@ -64,7 +64,7 @@ export function Hero() {
         
         </div>
         {/* micro text under CTA buttons */}
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 bg-black bg-opacity-25 bg rounded-md px-3 py-1">
+        <div className="absolute bottom-3  mt-48 left-1/2 -translate-x-1/2 z-20 bg-black bg-opacity-25 bg rounded-md px-3 py-1">
           <p className="text-center text-xs font-bold text-white/70 uppercase">
           ⚠︎ Warning! you will get compliments
           </p>
