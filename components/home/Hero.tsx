@@ -42,12 +42,12 @@ export function Hero() {
           </p>
         </motion.div>
         {/* CTA buttons */}
-        <div className="absolute bottom-32 sm:bottom-20 left-1/2 -translate-x-1/2 z-20 w-[calc(100%-2rem)] sm:w-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+        <div className="absolute bottom-14 sm:bottom-20 left-1/2 -translate-x-1/2 z-20 w-[calc(100%-2rem)] sm:w-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
           <motion.a
             href="/shop"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-full sm:w-auto text-center inline-block px-5 py-3 bg-black bg-opacity-25 text-white font-bold tracking-widest uppercase rounded-full text-xs sm:text-sm shadow-lg hover:shadow-xl transition-shadow border border-white/50"
+            className="w-6/12 sm:w-auto text-center inline-block px-5 py-2 sm:py-3 bg-black bg-opacity-25 text-white font-bold tracking-widest uppercase rounded-full text-xs sm:text-sm shadow-lg hover:shadow-xl transition-shadow border border-white/50"
           >
             Shop Now →
           </motion.a>
@@ -56,7 +56,7 @@ export function Hero() {
             href="/collections/best-sellers"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-full sm:w-auto text-center inline-block px-5 py-3 bg-black bg-opacity-25 text-white font-bold tracking-widest uppercase rounded-full text-xs sm:text-sm shadow-lg hover:shadow-xl transition-shadow border border-white/50"
+            className="w-6/12 sm:w-auto text-center inline-block px-5 py-2 sm:py-3 bg-black bg-opacity-25 text-white font-bold tracking-widest uppercase rounded-full text-xs sm:text-sm shadow-lg hover:shadow-xl transition-shadow border border-white/50"
           >
             Best Sellers →
           </motion.a>
@@ -64,7 +64,7 @@ export function Hero() {
         
         </div>
         {/* micro text under CTA buttons */}
-        <div className="absolute bottom-3  mt-48 left-1/2 -translate-x-1/2 z-20 bg-black bg-opacity-25 bg rounded-md px-3 py-1">
+        <div className="absolute bottom-3 w-[calc(100%-2rem)] sm:w-auto mt-48 left-1/2 -translate-x-1/2 z-20 bg-black bg-opacity-25 rounded-md px-3 py-1">
           <p className="text-center text-xs font-bold text-white/70 uppercase">
           ⚠︎ Warning! you will get compliments
           </p>
