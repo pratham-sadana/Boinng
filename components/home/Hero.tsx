@@ -42,7 +42,7 @@ export function Hero() {
           </p>
         </motion.div>
         {/* CTA buttons */}
-        <div className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 z-20 w-[calc(100%-2rem)] sm:w-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+        <div className="absolute bottom-32 sm:bottom-20 left-1/2 -translate-x-1/2 z-20 w-[calc(100%-2rem)] sm:w-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
           <motion.a
             href="/shop"
             whileHover={{ scale: 1.05 }}
@@ -60,6 +60,14 @@ export function Hero() {
           >
             Best Sellers →
           </motion.a>
+        
+        
+        </div>
+        {/* micro text under CTA buttons */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 bg-black bg-opacity-25 bg rounded-md px-3 py-1">
+          <p className="text-center text-xs font-bold text-white/70 uppercase">
+          ⚠︎ Warning! you will get compliments
+          </p>
         </div>
 
         {/* Scroll Indicator */}
