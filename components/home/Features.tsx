@@ -1,122 +1,65 @@
 'use client';
-import { motion, Variants } from 'framer-motion';
-import { Check, Shield, Award } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-const FEATURES = [
+const VALUE_BLOCKS = [
   {
-    id: 1,
-    title: 'PREMIUM COTTON',
-    desc: 'Ethically sourced, combed cotton with proven breathability. Tested to 100+ wash cycles without degradation.',
-    icon: <Check size={24} strokeWidth={1.5} />,
-    stat: '100%',
-    statDesc: 'Satisfaction'
+    title: 'Not your basic socks',
+    description: 'Designs that actually stand out (without trying too hard)',
   },
   {
-    id: 2,
-    title: 'ENGINEERED DURABILITY',
-    desc: 'Advanced reinforced heel and toe construction. Maintains shape and elasticity through continuous wear.',
-    icon: <Shield size={24} strokeWidth={1.5} />,
-    stat: '2YR',
-    statDesc: 'Warranty'
+    title: 'Comfort that lasts all day',
+    description: 'Soft, breathable, and made for real life - not just photos',
   },
   {
-    id: 3,
-    title: 'QUALITY ASSURED',
-    desc: 'Third-party tested for materials, durability, and safety standards. Every batch verified before shipping.',
-    icon: <Award size={24} strokeWidth={1.5} />,
-    stat: '1K+',
-    statDesc: 'Happy Customers'
-  }
-];
-
-const TRUST_SIGNALS = [
-  { label: 'Eco-Friendly Materials', value: 'GOTS Certified' },
-  { label: 'Quality Control', value: '99.2% Pass Rate' },
-  { label: 'Lifetime Support', value: 'Free Replacements' },
-  { label: 'Returns', value: '60-Day Guarantee' }
-];
-
-const containerVariants: Variants = {
-  hidden: { opacity: 1 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0 }
-  }
-};
-
-const cardVariants: Variants = {
-  hidden: { y: 0, opacity: 1 },
-  visible: {
-    y: 0, opacity: 1,
-    transition: { type: 'tween', duration: 0 }
-  }
-};
-
-const headerVariants: Variants = {
-  hidden: { opacity: 0, x: -30 },
-  visible: {
-    opacity: 1, x: 0,
-    transition: { duration: 0.5, type: "tween" }
-  }
-};
-
-const statsVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1, y: 0,
-    transition: { duration: 0.4, delay: i * 0.05 }
-  })
-};
-
-const QUALITY_POINTS = [
-  'Third-party tested materials',
-  'Ethically sourced cotton',
-  'Reinforced heel & toe',
-  'Certified durability standards',
-  'Lifetime customer support'
+    title: 'Made to match your vibe',
+    description: "Whether you're chill, chaotic, or a little bit of both",
+  },
 ];
 
 export function Features() {
   return (
-    <section className="py-16 bg-boinng-yellow overflow-hidden relative">
+    <section className="py-20 md:py-32 bg-[#FFFEFA] overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-4 md:px-10">
-
-        <div
-          className="flex flex-col lg:flex-row gap-8 md:gap-12 justify-between items-start md:items-center mb-16 md:mb-20 lg:ml-32"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-14 md:mb-20 flex flex-col items-center text-center"
         >
-          <div className="flex-1 w-full">
-            <h2 className="font-display text-[clamp(1.75rem,5vw,4rem)] md:text-[clamp(2.5rem,6vw,4rem)] leading-tight text-boinng-black uppercase tracking-widest">
-              BUILT ON<br/>QUALITY &<br/><span className="text-boinng-blue">INTEGRITY</span>
-            </h2>
-            <p className="font-medium text-sm md:text-base tracking-wide text-boinng-black/70 mt-4 md:mt-6 leading-relaxed">
-              We stand behind every pair. Our commitment to quality means rigorous testing, ethical sourcing, and unwavering customer support.
-            </p>
-          </div>
+          <span className="text-xs md:text-sm font-medium tracking-[0.2em] uppercase text-black/40 mb-4 block">
+            The Difference
+          </span>
+          <h2 className="font-display text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.9] text-boinng-black tracking-[0.04em] uppercase max-w-2xl">
+            Why Boinng?
+          </h2>
+        </motion.div>
 
-          <div className="flex-1 w-full">
-            <ul
-              className="space-y-3 md:space-y-4"
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          {VALUE_BLOCKS.map((block, idx) => (
+            <motion.article
+              key={block.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.6, delay: idx * 0.15, ease: [0.22, 1, 0.36, 1] }}
+              className="group relative rounded-[2rem] border border-black/[0.06] bg-white p-8 md:p-12 transition-all duration-500 hover:shadow-2xl hover:shadow-black/[0.04] hover:-translate-y-2 overflow-hidden"
             >
-              {QUALITY_POINTS.map((point, i) => (
-                <motion.li
-                  key={i}
-                  custom={i}
-                  variants={statsVariants}
-                  className="flex items-start gap-3 md:gap-4 lg:ml-28"
-                >
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-boinng-blue text-white flex items-center justify-center text-sm font-bold mt-1">
-                    ✓
-                  </span>
-                  <span className="font-medium text-boinng-black/80 text-base leading-relaxed">
-                    {point}
-                  </span>
-                </motion.li>
-              ))}
-            </ul>
-          </div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-black/[0.02] rounded-full blur-3xl -mr-20 -mt-20 transition-transform duration-700 group-hover:scale-150 group-hover:bg-black/[0.03]" />
+              
+              <div className="relative z-10 flex flex-col h-full">
+                <div className="w-12 h-[2px] bg-black/10 mb-8 transition-all duration-500 group-hover:w-16 group-hover:bg-black/30" />
+                
+                <h3 className="font-display text-2xl md:text-3xl text-boinng-black uppercase tracking-[0.04em] leading-tight mb-4">
+                  {block.title}
+                </h3>
+                <p className="text-base md:text-lg text-black/60 leading-relaxed font-light mt-auto">
+                  {block.description}
+                </p>
+              </div>
+            </motion.article>
+          ))}
         </div>
-
-
       </div>
     </section>
   );

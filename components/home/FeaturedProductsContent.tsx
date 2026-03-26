@@ -16,10 +16,11 @@ const BADGE_BG: Record<string, string> = {
   'SALE': 'bg-red-500 text-white',
 };
 
-function ProductCard({ product, onQuickAdd, index }: {
+function ProductCard({ product, onQuickAdd, index, fullWidth = false }: {
   product: Product;
   onQuickAdd: () => Promise<void>;
   index: number;
+  fullWidth?: boolean;
 }) {
   const transformed  = transformProduct(product);
   const displayPrice = formatMoney(transformed.price);
@@ -72,7 +73,7 @@ function ProductCard({ product, onQuickAdd, index }: {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="shrink-0 w-[180px] md:w-[220px]"
+      className={fullWidth ? 'w-full min-w-0' : 'shrink-0 w-[180px] md:w-[220px]'}
     >
       <div
         className="group relative flex flex-col rounded-2xl overflow-hidden bg-white border border-black/[0.07] h-full transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-black/10 cursor-pointer"
@@ -167,7 +168,17 @@ function ProductCard({ product, onQuickAdd, index }: {
   );
 }
 
-export function FeaturedProductsContent({ title, products }: { title: string; products: Product[] }) {
+export function FeaturedProductsContent({
+  title,
+  products,
+  layout = 'scroll',
+  showShopAll = true,
+}: {
+  title: string;
+  products: Product[];
+  layout?: 'scroll' | 'grid';
+  showShopAll?: boolean;
+}) {
   const { addItem }  = useCart();
   const sectionRef   = useRef(null);
   const scrollRef    = useRef<HTMLDivElement>(null);
@@ -175,7 +186,10 @@ export function FeaturedProductsContent({ title, products }: { title: string; pr
   const [canScrollLeft,  setCanScrollLeft]  = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
+  const isGrid = layout === 'grid';
+
   const checkScroll = () => {
+    if (isGrid) return;
     const el = scrollRef.current;
     if (!el) return;
     setCanScrollLeft(el.scrollLeft > 8);
@@ -184,13 +198,14 @@ export function FeaturedProductsContent({ title, products }: { title: string; pr
 
   useEffect(() => {
     const el = scrollRef.current;
-    if (!el) return;
+    if (!el || isGrid) return;
     checkScroll();
     el.addEventListener('scroll', checkScroll, { passive: true });
     return () => el.removeEventListener('scroll', checkScroll);
-  }, [products]);
+  }, [products, isGrid]);
 
   const scroll = (dir: 'left' | 'right') => {
+    if (isGrid) return;
     scrollRef.current?.scrollBy({ left: dir === 'left' ? -480 : 480, behavior: 'smooth' });
   };
 
@@ -208,7 +223,7 @@ export function FeaturedProductsContent({ title, products }: { title: string; pr
   };
 
   return (
-    <section ref={sectionRef} className="py-10 md:py-14 bg-[#FFFEFA] overflow-hidden -mx-4 sm:-mx-0 md:mx-0 px-4 sm:px-0 md:px-0">
+    <section ref={sectionRef} className="py-10 md:py-14 bg-[#FFFEFA] overflow-hidden">
       <div className="max-w-[1400px] mx-auto">
 
         {/* Header */}
@@ -224,7 +239,8 @@ export function FeaturedProductsContent({ title, products }: { title: string; pr
 
           <div className="flex items-center gap-2">
             {/* Scroll arrows */}
-            <div className="flex items-center gap-1">
+            {!isGrid && (
+              <div className="flex items-center gap-1">
               <button
                 onClick={() => scroll('left')}
                 disabled={!canScrollLeft}
@@ -239,15 +255,18 @@ export function FeaturedProductsContent({ title, products }: { title: string; pr
               >
                 <ChevronRight size={14} />
               </button>
-            </div>
+              </div>
+            )}
 
-            <Link
-              href="/collections"
-              className="group flex items-center gap-1 font-bold text-[10px] tracking-[0.2em] uppercase text-boinng-black hover:text-boinng-blue transition-colors duration-200 ml-1"
-            >
-              Shop All
-              <ArrowRight size={11} className="transition-transform duration-200 group-hover:translate-x-0.5" />
-            </Link>
+            {showShopAll && (
+              <Link
+                href="/collections"
+                className="group flex items-center gap-1 font-bold text-[10px] tracking-[0.2em] uppercase text-boinng-black hover:text-boinng-blue transition-colors duration-200 ml-1"
+              >
+                Shop All
+                <ArrowRight size={11} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+              </Link>
+            )}
           </div>
         </motion.div>
 
@@ -262,20 +281,29 @@ export function FeaturedProductsContent({ title, products }: { title: string; pr
             transition={{ duration: 0.4 }}
             className="relative"
           >
-            {/* Fade edges — hidden on mobile */}
-            <div className={`hidden md:block absolute left-0 top-0 bottom-4 w-10 bg-gradient-to-r from-[#FFFEFA] to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollLeft ? 'opacity-100' : 'opacity-0'}`} />
-            <div className={`hidden md:block absolute right-0 top-0 bottom-4 w-10 bg-gradient-to-l from-[#FFFEFA] to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollRight ? 'opacity-100' : 'opacity-0'}`} />
+            {!isGrid && (
+              <>
+                {/* Fade edges — hidden on mobile */}
+                <div className={`hidden md:block absolute left-0 top-0 bottom-4 w-10 bg-gradient-to-r from-[#FFFEFA] to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollLeft ? 'opacity-100' : 'opacity-0'}`} />
+                <div className={`hidden md:block absolute right-0 top-0 bottom-4 w-10 bg-gradient-to-l from-[#FFFEFA] to-transparent z-10 pointer-events-none transition-opacity duration-300 ${canScrollRight ? 'opacity-100' : 'opacity-0'}`} />
+              </>
+            )}
 
             <div
-              ref={scrollRef}
-              className="flex gap-3 overflow-x-auto px-0 sm:px-4 md:px-10 pb-3 snap-x snap-mandatory"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              ref={isGrid ? undefined : scrollRef}
+              className={
+                isGrid
+                  ? 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4 px-4 sm:px-4 md:px-10'
+                  : 'flex gap-3 overflow-x-auto px-4 sm:px-4 md:px-10 pb-3 snap-x snap-mandatory'
+              }
+              style={isGrid ? undefined : { scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {products.map((p, idx) => (
-                <div key={p.handle} className="snap-start">
+                <div key={p.handle} className={isGrid ? 'min-w-0' : 'snap-start'}>
                   <ProductCard
                     product={p}
                     index={idx}
+                    fullWidth={isGrid}
                     onQuickAdd={() => handleQuickAdd(p)}
                   />
                 </div>

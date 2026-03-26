@@ -6,6 +6,7 @@ import {
   FEATURED_COLLECTIONS_QUERY,
   ALL_COLLECTIONS_QUERY,
   ALL_PRODUCTS_QUERY,
+  NAVIGATION_MENU_QUERY,
 } from './queries';
 import type { Product, Collection, TransformedProduct, CollectionPreview, Metafield } from './types';
 
@@ -66,6 +67,35 @@ type MetafieldDefinitionsResponse = {
     }>;
   };
 };
+
+type MenuTitlesResponse = {
+  menu: {
+    items: Array<{
+      title: string;
+    }>;
+  } | null;
+};
+
+export async function getMenuTitles(handle: string): Promise<string[]> {
+  try {
+    const response = await shopifyFetch<MenuTitlesResponse>({
+      query: NAVIGATION_MENU_QUERY,
+      variables: { handle },
+      cache: 'force-cache',
+    });
+
+    if (!response.menu?.items?.length) {
+      return [];
+    }
+
+    return response.menu.items
+      .map((item) => item.title?.trim())
+      .filter((title): title is string => Boolean(title));
+  } catch (error) {
+    console.error(`Error fetching menu titles for "${handle}":`, error);
+    return [];
+  }
+}
 
 export async function enableMetafieldStorefrontAccess(): Promise<{
   enabled: string[];

@@ -9,69 +9,87 @@ export function BrandStory() {
   const ref    = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
-  const stats = [
-    { value: '50+',  label: 'Wild designs' },
-    { value: '100%', label: 'Made in India' },
-    { value: '10K+', label: 'Happy feet' },
-    { value: 'New',  label: 'Drop every Friday' },
-  ];
-
   return (
-    <section ref={ref} className="py-16 md:py-24 bg-boinng-black text-white overflow-hidden">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-10">
-        <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+    <section ref={ref} className="py-16 md:py-24 bg-[#F6F1E7] text-boinng-black overflow-hidden relative">
+      <div className="pointer-events-none absolute -top-20 -right-16 w-64 h-64 rounded-full bg-boinng-yellow/40 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-boinng-blue/20 blur-3xl" />
 
-          {/* Left — text */}
+      <div className="max-w-[1400px] mx-auto px-4 md:px-10">
+        <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-8 md:gap-12 lg:gap-16 items-stretch">
+
+          {/* Left - story card */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="relative"
           >
-            <p className="text-boinng-blue text-[10px] font-black tracking-[0.3em] uppercase mb-4">
-              Our Story
-            </p>
-            <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] uppercase tracking-widest leading-tight mb-6">
-              Life's too short<br />for boring socks.
-            </h2>
-            <p className="text-white/60 text-sm md:text-base leading-relaxed mb-4">
-              BOINNG! was born from a simple frustration — why is the most expressive inch of your outfit always a plain white tube? We said no. Loud prints, wild patterns, zero apologies.
-            </p>
-            <p className="text-white/60 text-sm md:text-base leading-relaxed mb-8">
-              Every pair is designed and made right here in India. So whether you're showing them off or hiding them in sneakers, your feet are always having more fun than everyone else's.
-            </p>
+            <div className="absolute -top-3 left-5 h-8 w-28 bg-boinng-yellow/80 rotate-[-2deg] rounded-sm" />
+            <div className="relative rounded-3xl border border-black/10 bg-[#fffdf8] p-6 md:p-8 lg:p-10 shadow-[0_14px_40px_rgba(0,0,0,0.08)]">
+              <p className="text-boinng-blue text-[10px] font-black tracking-[0.3em] uppercase mb-4">
+                Brand Story
+              </p>
+              <h2 className="font-display text-[clamp(1.8rem,4.6vw,3.1rem)] uppercase tracking-[0.06em] leading-[1.02] mb-6">
+                Why we started
+              </h2>
 
-            <Link
-              href="/pages/about"
-              className="group inline-flex items-center gap-2 font-bold text-xs tracking-[0.2em] uppercase text-boinng-blue hover:text-white transition-colors duration-200"
-            >
-              Read our full story
-              <ArrowRight size={13} className="transition-transform duration-200 group-hover:translate-x-1" />
-            </Link>
+              <div className="space-y-4 text-[15px] md:text-base leading-relaxed text-black/75">
+                <p>
+                  Boinng did not start in a big office or with a perfect plan.
+                </p>
+                <p>
+                  It started with a simple thought - why are socks always so boring?
+                </p>
+                <p>
+                  After leaving a fast-paced job and moving back home, I wanted to build something of my own. Something fun. Something expressive. Something that feels like you.
+                </p>
+                <p>
+                  Because the smallest things you wear?
+                  <br />
+                  They should still feel like you chose them.
+                </p>
+                <p className="font-semibold text-black/90">
+                  And that is how Boinng was born.
+                </p>
+              </div>
+
+              <Link
+                href="/pages/about"
+                className="group mt-7 inline-flex items-center gap-2 font-bold text-xs tracking-[0.2em] uppercase text-boinng-blue hover:text-boinng-black transition-colors duration-200"
+              >
+                Read our full story
+                <ArrowRight size={13} className="transition-transform duration-200 group-hover:translate-x-1" />
+              </Link>
+            </div>
           </motion.div>
 
-          {/* Right — stats grid */}
+          {/* Right - personal visual stack */}
           <motion.div
             initial={{ opacity: 0, x: 24 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="grid grid-cols-2 gap-px bg-white/10 rounded-2xl overflow-hidden"
+            className="relative lg:h-full"
           >
-            {stats.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 16 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.2 + i * 0.07, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="bg-white/[0.04] hover:bg-white/[0.08] transition-colors duration-300 p-8 flex flex-col gap-1"
+            <div className="rounded-3xl overflow-hidden border border-black/10 bg-black shadow-[0_12px_34px_rgba(0,0,0,0.18)] aspect-square lg:aspect-auto lg:h-full">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                className="w-full h-full object-cover opacity-90"
               >
-                <span className="font-display text-3xl md:text-4xl font-bold text-boinng-blue leading-none">
-                  {stat.value}
-                </span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
-                  {stat.label}
-                </span>
-              </motion.div>
-            ))}
+                <source src="/hero1.mp4" type="video/mp4" />
+              </video>
+            </div>
+            {/* <div className="rounded-2xl border border-black/10 bg-white/85 backdrop-blur px-5 py-4 mt-4 lg:mt-0 lg:absolute lg:left-4 lg:right-4 lg:bottom-4">
+              <p className="text-[10px] font-black tracking-[0.24em] uppercase text-boinng-blue mb-2">
+                Behind The Scenes
+              </p>
+              <p className="text-sm leading-relaxed text-black/70">
+                Building Boinng from home, one idea, one sketch, and one bold drop at a time.
+              </p>
+            </div> */}
           </motion.div>
 
         </div>

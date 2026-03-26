@@ -39,7 +39,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ han
 
   return (
     <div className="">
-      <FeaturedProductsContent title={title} products={products} />
+      <FeaturedProductsContent title={title} products={products} layout="grid" showShopAll={false} />
     </div>
   );
 }

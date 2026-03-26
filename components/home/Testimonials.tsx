@@ -40,10 +40,10 @@ export function Testimonials() {
           className="text-center mb-16"
         >
           <h2 className="font-sans text-[clamp(2rem,5vw,3.5rem)] text-boinng-black uppercase tracking-widest leading-none mb-4">
-            WORD ON THE STREET
+            Loved by our community
           </h2>
           <p className="font-medium text-sm tracking-widest text-boinng-black/50 uppercase">
-            Don't just take our word for it
+            {/* Don't just take our word for it */}
           </p>
         </div>
 

@@ -83,18 +83,27 @@ export async function POST(request: NextRequest) {
       // Continue with email even if customer creation fails
     }
 
-    // Optional: Send welcome email via email service
-    if (process.env.RESEND_API_KEY) {
-      console.log(`📬 Attempting to send welcome email to: ${email}`);
-      const emailResult = await sendNewsletterWelcomeEmail(email);
-      
-      if (!emailResult.success) {
-        console.error(`❌ Email send failed: ${emailResult.error}`);
-        // Don't fail subscription if email fails (it's optional)
-      }
-    } else {
-      console.log(`⚠️ RESEND_API_KEY not configured. Skipping email send.`);
+    // Send welcome email via email service (mandatory)
+    if (!process.env.RESEND_API_KEY) {
+      console.error(`❌ RESEND_API_KEY not configured. Email service unavailable.`);
+      return NextResponse.json(
+        { error: 'Email service not configured' },
+        { status: 503 }
+      );
     }
+
+    console.log(`📬 Sending welcome email to: ${email}`);
+    const emailResult = await sendNewsletterWelcomeEmail(email);
+    
+    if (!emailResult.success) {
+      console.error(`❌ Email send failed for ${email}: ${emailResult.error}`);
+      return NextResponse.json(
+        { error: 'Failed to send confirmation email. Please try again.' },
+        { status: 500 }
+      );
+    }
+
+    console.log(`✅ Welcome email sent successfully to ${email}`);
 
     console.log(`[Newsletter Signup] Email: ${email}, Time: ${new Date().toISOString()}`);
 

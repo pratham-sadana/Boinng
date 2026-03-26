@@ -237,22 +237,22 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
         transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
         className="flex flex-col"
       >
-        {/* Tags above title */}
+        
+
+        {/* Title */}
+        <h1 className="font-display text-3xl md:text-4xl lg:text-5xl uppercase tracking-widest mb-2 leading-tight">
+          {product.title}
+        </h1>
+        {/* Tags below title */}
         {product.tags?.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
             {product.tags.map((tag) => (
-              <span key={tag} className="px-3 py-1 bg-boinng-blue/8 text-boinng-blue rounded-full text-xs font-semibold tracking-wide uppercase">
+              <span key={tag} className="px-0 py-1 bg-boinng-blue/8 text-boinng-blue rounded-full text-xs font-semibold tracking-wide uppercase">
                 {tag}
               </span>
             ))}
           </div>
         )}
-
-        {/* Title */}
-        <h1 className="font-display text-3xl md:text-4xl lg:text-5xl uppercase tracking-widest mb-5 leading-tight">
-          {product.title}
-        </h1>
-
         {/* Price */}
         <div className="mb-6 pb-6 border-b border-black/10">
           <div className="flex items-baseline gap-3 flex-wrap">

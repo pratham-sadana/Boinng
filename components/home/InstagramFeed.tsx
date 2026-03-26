@@ -86,7 +86,7 @@ function InstagramPostEmbed({ post }: { post: InstagramPost }) {
 
 export function InstagramFeed({ posts = MOCK_POSTS, instagramHandle = 'boinng_' }: InstagramFeedProps) {
   return (
-    <section className="py-32 bg-boinng-black overflow-hidden">
+    <section className="py-32 bg-[#F4EFE5] overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-4 md:px-10">
         {/* Header */}
         <motion.div
@@ -98,10 +98,10 @@ export function InstagramFeed({ posts = MOCK_POSTS, instagramHandle = 'boinng_' 
           <span className="inline-block text-boinng-blue text-sm font-bold tracking-[0.2em] uppercase mb-4">
             Follow us on Instagram
           </span>
-          <h2 className="font-display text-[clamp(2.5rem,6vw,4rem)] text-white uppercase tracking-widest leading-none mb-4">
+          <h2 className="font-display text-[clamp(2.5rem,6vw,4rem)] text-boinng-black uppercase tracking-widest leading-none mb-4">
             @{instagramHandle}
           </h2>
-          <p className="text-sm md:text-base font-medium tracking-wide text-white/60 max-w-2xl mx-auto mb-8">
+          <p className="text-sm md:text-base font-medium tracking-wide text-black/65 max-w-2xl mx-auto mb-8">
             See how our community styles, Tag us in your posts for a chance to be featured.
           </p>
 
@@ -111,7 +111,7 @@ export function InstagramFeed({ posts = MOCK_POSTS, instagramHandle = 'boinng_' 
             rel="noopener noreferrer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-block px-8 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white font-bold tracking-widest uppercase rounded-full text-sm shadow-lg hover:shadow-xl transition-shadow"
+            className="inline-block px-8 py-3 bg-boinng-blue text-white font-bold tracking-widest uppercase rounded-full text-sm shadow-lg hover:shadow-xl hover:bg-boinng-black transition-all"
           >
             Follow Now →
           </motion.a>
@@ -138,7 +138,7 @@ export function InstagramFeed({ posts = MOCK_POSTS, instagramHandle = 'boinng_' 
           transition={{ delay: 0.3 }}
           className="text-center mt-16"
         >
-          <p className="text-boinng-white/60 text-sm md:text-base font-medium tracking-wide mb-6 uppercase">
+          <p className="text-black/60 text-sm md:text-base font-medium tracking-wide mb-6 uppercase">
             Don't see your post? Check our feed for tagged content
           </p>
           <motion.a
@@ -147,7 +147,7 @@ export function InstagramFeed({ posts = MOCK_POSTS, instagramHandle = 'boinng_' 
             rel="noopener noreferrer"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-block px-8 py-4 border-2 border-white text-white font-bold tracking-widest uppercase rounded-full hover:bg-white hover:text-boinng-black transition-colors"
+            className="inline-block px-8 py-4 border-2 border-boinng-black text-boinng-black font-bold tracking-widest uppercase rounded-full hover:bg-boinng-black hover:text-white transition-colors"
           >
             View All Posts →
           </motion.a>

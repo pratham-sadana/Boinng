@@ -75,7 +75,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ merchandiseId, quantity }),
       });
 
-      const data = await response.json();
+      const data = await response.json() as { cartId: string; checkoutUrl?: string; lines?: Array<{ id: string; merchandise: { id: string } }> };
 
       if (!response.ok) {
         return null;
@@ -88,11 +88,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
 
       // Update items with lineIds from the response
-      if (data.lines && data.lines.length > 0) {
+      if (data.lines && Array.isArray(data.lines) && data.lines.length > 0) {
         setItems(prevItems =>
           prevItems.map(item => {
-            const line = data.lines.find(
-              (l: any) => l.merchandise.id === item.id
+            const line = data.lines?.find(
+              (l) => l.merchandise.id === item.id
             );
             if (line) {
               return { ...item, lineId: line.id };
@@ -118,7 +118,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ cartId, merchandiseId, quantity }),
       });
 
-      const data = await response.json();
+      const data = await response.json() as { checkoutUrl?: string; lines?: Array<{ id: string; merchandise: { id: string } }> };
 
       if (!response.ok) {
         return;
@@ -129,11 +129,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
 
       // Update items with lineIds from the response
-      if (data.lines && data.lines.length > 0) {
+      if (data.lines && Array.isArray(data.lines) && data.lines.length > 0) {
         setItems(prevItems =>
           prevItems.map(item => {
-            const line = data.lines.find(
-              (l: any) => l.merchandise.id === item.id
+            const line = data.lines?.find(
+              (l) => l.merchandise.id === item.id
             );
             if (line) {
               return { ...item, lineId: line.id };

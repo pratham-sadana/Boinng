@@ -6,7 +6,7 @@ import {
   useAnimationFrame,
 } from 'framer-motion';
 
-const DEFAULT = ['NEW DROPS EVERY FRIDAY', 'FREE SHIPPING OVER ₹799', 'LIMITED EDITION ONLY', 'STREETWEAR FOR THE BOLD', 'MADE IN INDIA'];
+const DEFAULT = [''];
 
 export function Marquee({ items = DEFAULT, sep = '✦', white = false, speed = 80 }: {
   items?: string[]; sep?: string; white?: boolean; speed?: number;
@@ -14,7 +14,9 @@ export function Marquee({ items = DEFAULT, sep = '✦', white = false, speed = 8
   const [isPaused, setIsPaused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [singleWidth, setSingleWidth] = useState(0);
+  const [containerWidth, setContainerWidth] = useState(0);
 
+  const containerRef = useRef<HTMLDivElement>(null);
   const singleRef = useRef<HTMLDivElement>(null);
   const baseX = useMotionValue(0);
 
@@ -23,10 +25,26 @@ export function Marquee({ items = DEFAULT, sep = '✦', white = false, speed = 8
 
   // ✅ Measure the exact pixel width of ONE copy
   useEffect(() => {
-    if (singleRef.current) {
-      setSingleWidth(singleRef.current.scrollWidth);
-    }
+    const measure = () => {
+      if (singleRef.current) {
+        setSingleWidth(singleRef.current.scrollWidth);
+      }
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.clientWidth);
+      }
+    };
+
+    measure();
+    window.addEventListener('resize', measure);
+
+    return () => {
+      window.removeEventListener('resize', measure);
+    };
   }, [items]);
+
+  const repeatCount = singleWidth > 0
+    ? Math.max(3, Math.ceil(containerWidth / singleWidth) + 2)
+    : 3;
 
   useAnimationFrame((t, delta) => {
     if (isPaused || singleWidth === 0) return;
@@ -46,6 +64,7 @@ export function Marquee({ items = DEFAULT, sep = '✦', white = false, speed = 8
 
   return (
     <motion.div
+      ref={containerRef}
       className={`overflow-hidden whitespace-nowrap py-4 border-y border-boinng-black/10 cursor-pointer select-none relative ${white ? 'bg-white' : 'bg-boinng-yellow'} ${isPaused ? 'opacity-80' : ''}`}
       onClick={() => setIsPaused(!isPaused)}
       onMouseEnter={() => setIsHovered(true)}
@@ -55,31 +74,23 @@ export function Marquee({ items = DEFAULT, sep = '✦', white = false, speed = 8
       title={isPaused ? 'Click to resume' : 'Click to pause'}
     >
       <motion.div className="flex items-center" style={{ x: baseX }}>
-        {/* ✅ First copy — measured via ref */}
-        <div ref={singleRef} className="flex items-center">
-          {items.map((t, i) => (
-            <span
-              key={i}
-              className={`font-display text-sm md:text-base font-bold tracking-[0.15em] uppercase px-8 flex items-center whitespace-nowrap ${white ? 'text-boinng-yellow' : 'text-boinng-black'} ${isHovered ? 'opacity-70' : 'opacity-100'} transition-all duration-300`}
-            >
-              {t}
-              <span className="ml-16 inline-block font-normal opacity-30">{sep}</span>
-            </span>
-          ))}
-        </div>
-
-        {/* ✅ Second copy — identical clone */}
-        <div className="flex items-center">
-          {items.map((t, i) => (
-            <span
-              key={i}
-              className={`font-display text-sm md:text-base font-bold tracking-[0.15em] uppercase px-8 flex items-center whitespace-nowrap ${white ? 'text-boinng-yellow' : 'text-boinng-black'} ${isHovered ? 'opacity-70' : 'opacity-100'} transition-all duration-300`}
-            >
-              {t}
-              <span className="ml-16 inline-block font-normal opacity-30">{sep}</span>
-            </span>
-          ))}
-        </div>
+        {Array.from({ length: repeatCount }).map((_, copyIndex) => (
+          <div
+            key={copyIndex}
+            ref={copyIndex === 0 ? singleRef : undefined}
+            className="flex items-center"
+          >
+            {items.map((t, i) => (
+              <span
+                key={`${copyIndex}-${i}-${t}`}
+                className={`font-display text-sm md:text-base font-bold tracking-[0.15em] uppercase px-8 flex items-center whitespace-nowrap ${white ? 'text-boinng-blue' : 'text-boinng-black'} ${isHovered ? 'opacity-70' : 'opacity-100'} transition-all duration-300`}
+              >
+                {t}
+                <span className="ml-16 inline-block font-normal opacity-30">{sep}</span>
+              </span>
+            ))}
+          </div>
+        ))}
       </motion.div>
 
       {isPaused && (
@@ -89,7 +100,6 @@ export function Marquee({ items = DEFAULT, sep = '✦', white = false, speed = 8
           className={`absolute inset-0 flex items-center justify-center text-sm font-bold tracking-widest uppercase ${white ? 'text-boinng-black' : 'text-boinng-yellow'}`}
           style={{ pointerEvents: 'none' }}
         >
-          PAUSED
         </motion.div>
       )}
     </motion.div>

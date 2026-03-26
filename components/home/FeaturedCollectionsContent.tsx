@@ -29,8 +29,8 @@ export function FeaturedCollectionsContent({
   if (visible.length === 0) return null;
 
   return (
-    <section ref={ref} className="py-10 md:py-14 bg-[#FFFEFA] overflow-hidden -mx-4 sm:-mx-0 md:mx-0 px-4 sm:px-0 md:px-0">
-      <div className="max-w-full px-0 sm:px-3 md:px-10">
+    <section ref={ref} className="py-10 md:py-14 bg-[#FFFEFA] overflow-hidden">
+      <div className="max-w-full px-4 sm:px-3 md:px-10">
         <div className="max-w-[1400px] mx-auto">
 
         {/* Header */}
@@ -75,6 +75,7 @@ function CollectionCard({
   inView: boolean;
 }) {
   const productCount = collection.products?.edges?.length || 0;
+  const displayTitle = (collection.title || collection.handle).replace(/[-_]+/g, ' ');
 
   // Make first card span 2 cols on md+ for an asymmetric editorial feel
   const isHero = index === 0;
@@ -111,7 +112,7 @@ function CollectionCard({
           {/* Info — sits on top of the image */}
           <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
             <h3 className="font-display text-sm md:text-lg lg:text-xl uppercase tracking-widest font-bold text-white leading-tight line-clamp-2 mb-1">
-              {collection.title}
+              {displayTitle}
             </h3>
 
             {collection.description && (
@@ -126,7 +127,7 @@ function CollectionCard({
                   {productCount} item{productCount !== 1 ? 's' : ''}
                 </span>
               )}
-              <span className="ml-auto flex items-center gap-1 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-boinng-blue group-hover:text-white transition-colors duration-300">
+              <span className="ml-auto flex items-center gap-1 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white/50 group-hover:text-white transition-colors duration-300">
                 Shop
                 <ArrowRight size={10} className="transition-transform duration-300 group-hover:translate-x-0.5" />
               </span>

@@ -63,8 +63,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-boinng-black text-[#FFFEFA] overflow-hidden relative">
-
+    <footer className="bg-blue-800 text-white overflow-hidden relative">
       {/* Main content */}
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-16 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-16">
@@ -80,7 +79,7 @@ export function Footer() {
                 className="w-fit"
               >
                 <Image
-                  src="/logos/blue-text.png"
+                  src="/logos/white-text.png"
                   alt="BOINNG!"
                   width={180}
                   height={60}
@@ -91,8 +90,8 @@ export function Footer() {
             </Link>
 
             {/* Tagline */}
-            <p className="text-sm leading-relaxed text-[#FFFEFA]/50 font-medium max-w-xs">
-              Streetwear for the bold. Limited drops, exclusive collabs, and a community that dares to be different.
+            <p className="text-sm leading-relaxed text-white/75 font-medium max-w-xs">
+              Quirky socks for the beautiful feets. Limited drops, exclusive collabs, and a community
             </p>
 
             {/* Instagram */}
@@ -103,7 +102,7 @@ export function Footer() {
               whileHover={{ x: 5 }}
               className="flex items-center gap-3 w-fit group"
             >
-              <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-boinng-blue group-hover:border-boinng-blue transition-all duration-300">
+              <div className="w-10 h-10 rounded-full border border-white/30 text-white/85 flex items-center justify-center group-hover:bg-boinng-yellow group-hover:border-black group-hover:text-boinng-black transition-all duration-300">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
@@ -111,20 +110,20 @@ export function Footer() {
                 </svg>
               </div>
               <div className="flex flex-col">
-                <span className="font-display font-bold text-xs uppercase tracking-widest text-[#FFFEFA] group-hover:text-boinng-blue transition-colors">
+                <span className="font-display font-bold text-xs uppercase tracking-widest text-white group-hover:text-boinng-yellow transition-colors">
                   @boinng_
                 </span>
-                <span className="text-[10px] opacity-40 uppercase tracking-widest">Follow us</span>
+                <span className="text-[10px] text-white/65 uppercase tracking-widest">Follow us</span>
               </div>
             </motion.a>
 
             {/* Newsletter */}
-            <div className="flex flex-col gap-4 pt-6 border-t border-white/10">
+            <div className="flex flex-col gap-4 pt-6 border-t border-white/20">
               <div>
-                <h3 className="font-display text-xs font-bold uppercase tracking-[0.2em] text-boinng-blue mb-1">
+                <h3 className="font-display text-xs font-bold uppercase tracking-[0.2em] text-boinng-yellow mb-1">
                   Join the Club
                 </h3>
-                <p className="text-xs text-[#FFFEFA]/40 uppercase tracking-widest">
+                <p className="text-xs text-white/70 uppercase tracking-widest">
                   Early access. Exclusive drops.
                 </p>
               </div>
@@ -133,7 +132,7 @@ export function Footer() {
                 <motion.p
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-xs font-bold uppercase tracking-widest text-boinng-blue"
+                  className="text-xs font-bold uppercase tracking-widest text-boinng-yellow"
                 >
                   You're in. 🎉
                 </motion.p>
@@ -141,25 +140,25 @@ export function Footer() {
                 <motion.p
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-xs font-bold uppercase tracking-widest text-red-400"
+                  className="text-xs font-bold uppercase tracking-widest text-red-200"
                 >
                   {error}
                 </motion.p>
               ) : (
-                <form onSubmit={handleSubmit} className="flex gap-0 border-b border-white/20 focus-within:border-[#FFFEFA] transition-colors">
+                <form onSubmit={handleSubmit} className="flex gap-0 border-b border-white/30 focus-within:border-white transition-colors">
                   <input
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="YOUR EMAIL"
-                    className="flex-1 bg-transparent py-3 text-xs font-bold tracking-widest text-boinng-blue placeholder:text-white/20 focus:outline-none"
+                    className="flex-1 bg-transparent py-3 text-xs font-bold tracking-widest text-white placeholder:text-white/45 focus:outline-none"
                     required
                     disabled={isLoading}
                   />
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="py-3 px-2 text-xs font-bold text-boinng-blue hover:text-[#FFFEFA] transition-colors tracking-widest disabled:opacity-50"
+                    className="py-3 px-2 text-xs font-bold text-boinng-yellow hover:text-white transition-colors tracking-widest disabled:opacity-50"
                   >
                     {isLoading ? '⏳' : '→'}
                   </button>
@@ -174,7 +173,7 @@ export function Footer() {
           {/* Links — 3 cols each */}
           {Object.entries(LINKS).map(([group, items]) => (
             <div key={group} className="pl-10 md:col-span-2 flex flex-col gap-6 relative">
-              <h3 className="font-display text-xs font-bold uppercase tracking-[0.2em] text-boinng-blue">
+              <h3 className="font-display text-xs font-bold uppercase tracking-[0.2em] text-boinng-yellow">
                 {group}
               </h3>
               <ul className="flex flex-col gap-4">
@@ -182,7 +181,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-xs font-medium tracking-widest uppercase text-[#FFFEFA]/40 hover:text-[#FFFEFA] hover:translate-x-1 inline-block transition-all duration-200"
+                      className="text-xs font-medium tracking-widest uppercase text-white/75 hover:text-white hover:translate-x-1 inline-block transition-all duration-200"
                     >
                       {link.label}
                     </Link>
@@ -194,12 +193,12 @@ export function Footer() {
 
           {/* Payment / Trust badges col */}
           <div className="md:col-span-1 flex flex-col gap-6">
-            <h3 className="font-display text-xs font-bold uppercase tracking-[0.2em] text-boinng-blue">
+            <h3 className="font-display text-xs font-bold uppercase tracking-[0.2em] text-boinng-yellow">
               We Accept
             </h3>
             <div className="flex flex-col gap-2">
               {['UPI', 'Cards'].map(method => (
-                <span key={method} className="text-xs font-bold uppercase tracking-widest text-[#FFFEFA]/30 border border-white/10 px-3 py-1.5 w-fit">
+                <span key={method} className="text-xs font-bold uppercase tracking-widest text-white/80 border border-white/30 px-3 py-1.5 w-fit">
                   {method}
                 </span>
               ))}
@@ -210,20 +209,20 @@ export function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-white/10">
+      <div className="border-t border-white/20">
         <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[10px] uppercase tracking-widest opacity-25 text-[#FFFEFA]">
+          <p className="text-[10px] uppercase tracking-widest text-white/70">
             © {new Date().getFullYear()} BOINNG! All rights reserved.
           </p>
 
-          <div className="flex gap-6 text-[10px] font-medium tracking-widest uppercase text-[#FFFEFA]/30">
-            <Link href="/pages/privacy" className="hover:opacity-100 transition-opacity">Privacy</Link>
-            <Link href="/pages/terms" className="hover:opacity-100 transition-opacity">Terms</Link>
+          <div className="flex gap-6 text-[10px] font-medium tracking-widest uppercase text-white/70">
+            <Link href="/pages/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="/pages/terms" className="hover:text-white transition-colors">Terms</Link>
             <a
               href="https://sixty9.dev"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:opacity-100 transition-opacity"
+              className="hover:text-white transition-colors"
             >
               Built by Sixty9 Developers
             </a>

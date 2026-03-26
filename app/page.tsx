@@ -4,6 +4,8 @@ import { Hero }             from '@/components/home/Hero';
 import { Marquee }          from '@/components/layout/Marquee';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
 import { FeaturedCollections } from '@/components/home/FeaturedCollections';
+import { getMenuTitles } from '@/lib/shopify/api';
+import { createOrganizationSchema } from '@/lib/shopify/sanitize';
 
 // Lazy-load below-the-fold sections for faster initial load
 const Features      = dynamic(() => import('@/components/home/Features').then(m => ({ default: m.Features })));
@@ -12,7 +14,34 @@ const Testimonials  = dynamic(() => import('@/components/home/Testimonials').the
 const InstagramFeed = dynamic(() => import('@/components/home/InstagramFeed').then(m => ({ default: m.InstagramFeed })));
 const FinalCTA      = dynamic(() => import('@/components/home/FinalCTA').then(m => ({ default: m.FinalCTA })));
 
-export default function HomePage() {
+const TOP_MARQUEE_MENU_HANDLE = 'first-marquee';
+const BOTTOM_MARQUEE_MENU_HANDLE = 'second-marquee';
+
+const TOP_MARQUEE_FALLBACK = [
+  'NEW DROPS EVERY FRIDAY',
+  'FREE SHIPPING OVER ₹799',
+  'LIMITED EDITION ONLY',
+  'STREETWEAR FOR THE BOLD',
+  'MADE IN INDIA',
+];
+
+const BOTTOM_MARQUEE_FALLBACK = [
+  'ONLY THE BOLD',
+  'LIMITED DROPS',
+  "INDIA'S OWN",
+  'MAKE IT BOINNG!',
+  'STREETWEAR FIRST',
+];
+
+export default async function HomePage() {
+  const [topMarqueeItems, bottomMarqueeItems] = await Promise.all([
+    getMenuTitles(TOP_MARQUEE_MENU_HANDLE),
+    getMenuTitles(BOTTOM_MARQUEE_MENU_HANDLE),
+  ]);
+
+  const topItems = topMarqueeItems.length > 0 ? topMarqueeItems : TOP_MARQUEE_FALLBACK;
+  const bottomItems = bottomMarqueeItems.length > 0 ? bottomMarqueeItems : BOTTOM_MARQUEE_FALLBACK;
+
   return (
     <>
       {/* JSON-LD Schema for Organization */}
@@ -20,24 +49,7 @@ export default function HomePage() {
         id="organization-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Organization',
-            name: 'BOINNG!',
-            url: 'https://boinng.com',
-            logo: 'https://boinng.com/logos/cropped.png',
-            description: "BOINNG! is India's boldest streetwear brand. Limited drops, premium quality, zero compromise.",
-            sameAs: [
-              'https://instagram.com/boinng',
-              'https://twitter.com/boinng',
-              'https://facebook.com/boinng',
-            ],
-            contactPoint: {
-              '@type': 'ContactPoint',
-              contactType: 'Customer Service',
-              url: 'https://boinng.com/pages/contact',
-            },
-          }),
+          __html: createOrganizationSchema(),
         }}
       />
 
@@ -45,17 +57,16 @@ export default function HomePage() {
       <Hero />
 
       {/* 2. Energy burst immediately after hero — keeps momentum */}
-      <Marquee speed={130} />
+      <Marquee speed={130} items={topItems} />
 
+      <FeaturedCollections limit={6} />
+      
       {/* 3. Best Sellers — product discovery #1 priority, hottest items first */}
       <FeaturedProducts
-        title="BEST SELLERS"
+        title="Everyone’s obsessed with these"
         collectionHandle="best-sellers"
         limit={8}
       />
-
-      {/* 4. Collections — let users self-select their category */}
-      <FeaturedCollections limit={6} />
 
       {/* 5. New Arrivals — reward browsers who kept scrolling */}
       <FeaturedProducts
@@ -63,8 +74,21 @@ export default function HomePage() {
         collectionHandle="new-arrivals"
         limit={8}
       />
-
+      <FinalCTA />
       {/* 6. Why BOINNG! — builds trust before asking for the sale */}
+
+      <FeaturedCollections
+        limit={6}
+        mode="all"
+        excludeHandles={[
+          'new-arrivals',
+          'best-sellers',
+          'sale',
+          'ankle-length',
+          'crew-length',
+          'solids',
+        ]}
+      />
       <Features />
 
       {/* 7. Brand story — who we are, why it matters */}
@@ -72,9 +96,9 @@ export default function HomePage() {
 
       {/* 8. Dark marquee — palette break, keeps energy up */}
       <Marquee
-        speed={20}
+        speed={70}
         white
-        items={["ONLY THE BOLD", "LIMITED DROPS", "INDIA'S OWN", "MAKE IT BOINNG!", "STREETWEAR FIRST"]}
+        items={bottomItems}
       />
 
       {/* 9. Social proof — Instagram + testimonials together for max credibility */}
@@ -82,7 +106,7 @@ export default function HomePage() {
       <Testimonials />
 
       {/* 10. Final CTA — capture intent at the very end */}
-      <FinalCTA />
+      
     </>
   );
 }
