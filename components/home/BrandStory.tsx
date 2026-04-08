@@ -53,13 +53,13 @@ export function BrandStory() {
                 </p>
               </div>
 
-              <Link
+              {/* <Link
                 href="/pages/about"
                 className="group mt-7 inline-flex items-center gap-2 font-bold text-xs tracking-[0.2em] uppercase text-boinng-blue hover:text-boinng-black transition-colors duration-200"
               >
                 Read our full story
                 <ArrowRight size={13} className="transition-transform duration-200 group-hover:translate-x-1" />
-              </Link>
+              </Link> */}
             </div>
           </motion.div>
 

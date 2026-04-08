@@ -5,7 +5,7 @@ import { useRef } from 'react';
 export function Hero() {
   const ref = useRef(null);
   return (
-    <div className='border-b-8 rounded-lg w-full h-[75vh] border-boinng-yellow/50 overflow-hidden relative'>
+    <div className=' rounded-lg w-full h-[87vh] border-boinng-bg/50 overflow-hidden relative'>
       <section ref={ref} className="relative w-full h-full bg-boinng-black overflow-hidden">
 
         {/* Parallax background */}

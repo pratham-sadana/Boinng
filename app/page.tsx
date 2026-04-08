@@ -55,18 +55,17 @@ export default async function HomePage() {
 
       {/* 1. Hero — first impression, scroll-scrub video */}
       <Hero />
-      <FinalCTA />
-      {/* 2. Energy burst immediately after hero — keeps momentum */}
-      {/* <Marquee speed={130} items={topItems} /> */}
 
-      {/* <FeaturedCollections limit={6} /> */}
-      
-      {/* 3. Best Sellers — product discovery #1 priority, hottest items first */}
       <FeaturedProducts
         title="Everyone’s obsessed with these"
         collectionHandle="best-sellers"
         limit={8}
       />
+      <FinalCTA />
+      
+      {/* <Marquee speed={130} items={topItems} /> */}
+
+      {/* <FeaturedCollections limit={6} /> */}
 
       {/* 5. New Arrivals — reward browsers who kept scrolling */}
       <FeaturedProducts

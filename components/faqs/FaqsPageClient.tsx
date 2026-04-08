@@ -2,87 +2,96 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Link from 'next/link';
 import { Plus, ArrowRight } from 'lucide-react';
 
 const FAQS = [
   {
-    category: 'Orders & Shipping',
-    emoji: '📦',
+    category: 'Payments',
+    emoji: '',
     items: [
       {
-        q: 'How long does delivery take?',
-        a: 'Most orders arrive within 4–7 business days across India. Metro cities are usually faster — 2–4 days. We\'ll send you a tracking link the moment your socks leave our hands.',
+        q: 'What payment methods do you accept?',
+        a: 'We accept UPI, debit/credit cards, net banking, and wallets.',
+      },
+      {
+        q: 'Can I change or cancel my order?',
+        a: 'If your order hasn\'t been shipped yet, yes! Drop us a message ASAP and we\'ll try our best.',
+      },
+      {
+        q: 'Will I get an order confirmation?',
+        a: 'Of course. You\'ll get an email/SMS as soon as your order is placed.',
+      },
+    ],
+  },
+  {
+    category: 'Shipping & Delivery',
+    emoji: '',
+    items: [
+      {
+        q: 'How long will my order take to arrive?',
+        a: 'Orders are usually delivered within 3-7 working days depending on your location.',
       },
       {
         q: 'Do you offer free shipping?',
         a: 'Yes! Orders above ₹799 ship free. Below that, it\'s a flat ₹49. Honestly just throw in one extra pair — your feet will appreciate it.',
       },
       {
-        q: 'Can I change or cancel my order?',
-        a: 'If your order hasn\'t been packed yet, absolutely. Drop us a message at orders@boinng.in within 2 hours of placing it and we\'ll sort it out.',
+        q: 'How can I track my order?',
+        a: 'Once shipped, you\'ll receive a tracking link via SMS/email.',
       },
       {
-        q: 'Do you ship internationally?',
-        a: 'Not yet — but we\'re working on it! Sign up to our newsletter and we\'ll shout when international shipping goes live.',
+        q: 'Do you ship all over India?',
+        a: 'Yes! We deliver across most serviceable PIN codes in India.',
       },
     ],
   },
   {
     category: 'Returns & Exchanges',
-    emoji: '🔄',
+    emoji: '',
     items: [
       {
-        q: 'What is your return policy?',
-        a: 'We accept returns within 7 days of delivery, as long as the socks are unworn and in original packaging. We know, we know — it\'s hard to resist trying them on.',
+        q: 'Can I return or exchange my socks?',
+        a: 'Due to hygiene reasons socks cannot be returned or exchanged.',
       },
       {
-        q: 'My order arrived damaged. What do I do?',
-        a: 'That\'s on us and we\'re sorry. Take a photo and email it to hello@boinng.in — we\'ll send a replacement or refund within 24 hours. No questions asked.',
-      },
-      {
-        q: 'Can I exchange for a different size?',
-        a: 'Yes! Reply to your order confirmation email with your exchange request and we\'ll guide you through it. Exchanges are free if the original order was above ₹799.',
+        q: 'What if I receive a damaged or wrong product?',
+        a: 'We\'ve got your back. Just send us a picture within 48 hours of delivery and we\'ll fix it ASAP.',
       },
     ],
   },
   {
-    category: 'Product & Sizing',
-    emoji: '🧦',
+    category: 'Gifting & Bulk Orders',
+    emoji: '',
     items: [
       {
-        q: 'What sizes do you offer?',
-        a: 'We carry Free Size (fits UK 6–10) and Large (fits UK 10–13). If you\'re between sizes, go larger — socks stretch but they don\'t shrink.',
+        q: 'Do you offer gift options?',
+        a: 'Absolutely! Our bundles make a perfect gift.',
       },
       {
-        q: 'What are your socks made of?',
-        a: 'Our socks are 80% combed cotton, 15% nylon, and 5% elastane. Soft, breathable, and built to last — even after your washing machine does its worst.',
-      },
-      {
-        q: 'How do I wash my BOINNG! socks?',
-        a: 'Machine wash cold, inside out, with similar colours. Skip the bleach and the dryer if you want the colours to stay as loud as the day you bought them.',
-      },
-      {
-        q: 'Will the colours fade?',
-        a: 'We use high-grade reactive dyes specifically to resist fading. Wash correctly and your socks will outlast most of your other clothes. Possibly your relationships too.',
+        q: 'Can I order in bulk?',
+        a: 'Yes! Use the message box below for enquiry.',
       },
     ],
   },
   {
-    category: 'Payments',
-    emoji: '💳',
+    category: 'Product & Care',
+    emoji: '',
     items: [
       {
-        q: 'What payment methods do you accept?',
-        a: 'UPI, credit/debit cards, net banking, and all major wallets. We also offer Cash on Delivery for orders up to ₹2,000.',
+        q: 'What are Boinng socks made of?',
+        a: 'Our socks are crafted with soft, breathable cotton to keep your feet comfy all day.',
       },
       {
-        q: 'Is my payment information safe?',
-        a: 'All payments are processed via Razorpay and Shopify Payments — both PCI-DSS compliant. We never store your card details.',
+        q: 'Are your socks unisex?',
+        a: 'Yes! Most of our designs are made to fit and look great on everyone.',
       },
       {
-        q: 'Do you offer EMI?',
-        a: 'EMI is available on credit cards for orders above ₹1,500. You\'ll see the option at checkout.',
+        q: 'How do I choose the right size?',
+        a: 'Check our size guide on the product page-it\'s super simple.',
+      },
+      {
+        q: 'How should I wash my socks?',
+        a: 'Wash inside out, use cold water, avoid harsh detergents, and air dry for longer life.',
       },
     ],
   },
@@ -129,9 +138,16 @@ function AccordionItem({ q, a, isOpen, onToggle }: {
 }
 
 export function FaqsPageClient() {
-  const [openItem, setOpenItem] = useState<string | null>('Orders & Shipping-0');
+  const [message, setMessage] = useState('');
+  const [openItem, setOpenItem] = useState<string | null>('Payments-0');
 
   const toggle = (key: string) => setOpenItem(prev => prev === key ? null : key);
+
+  const handleWhatsApp = () => {
+    const text = message.trim() || 'I want to do a bulk order';
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=919021695191&text=${encodeURIComponent(text)}`;
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <main className="bg-[#FFFEFA] min-h-screen">
@@ -149,10 +165,10 @@ export function FaqsPageClient() {
         >
           <p className="text-boinng-blue text-[10px] font-black tracking-[0.35em] uppercase mb-4">Help Centre</p>
           <h1 className="font-display text-[clamp(2.5rem,8vw,5.5rem)] uppercase tracking-widest text-white leading-tight mb-3">
-            Got questions?
+            FAQ
           </h1>
           <p className="text-white/45 text-sm max-w-sm mx-auto leading-relaxed">
-            We've got answers. And if we don't, we'll make something up. (Kidding. Mostly.)
+            Everything you need to know before your next sock drop.
           </p>
         </motion.div>
       </section>
@@ -198,20 +214,30 @@ export function FaqsPageClient() {
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="rounded-2xl bg-boinng-blue p-8 text-center"
         >
-          <p className="text-white/70 text-[10px] font-black tracking-[0.3em] uppercase mb-2">Still confused?</p>
+          <p className="text-white/70 text-[10px] font-black tracking-[0.3em] uppercase mb-2">Still have questions?</p>
           <h3 className="font-display text-xl uppercase tracking-widest text-white mb-2">
-            We're real humans. Promise.
+            We love chatting (especially about socks)
           </h3>
           <p className="text-white/60 text-sm mb-6 leading-relaxed">
-            Drop us a message and we'll get back to you within a few hours.
+            If you didn't find what you're looking for, send us a message and we'll help you out.
           </p>
-          <Link
-            href="mailto:boinng.in@gmail.com"
-            className="group inline-flex items-center gap-2 bg-white text-boinng-blue font-bold text-xs tracking-[0.2em] uppercase px-6 py-3 rounded-full hover:bg-boinng-black hover:text-white transition-all duration-300"
-          >
-            Email us
-            <ArrowRight size={13} className="transition-transform duration-200 group-hover:translate-x-0.5" />
-          </Link>
+          <div className="max-w-xl mx-auto rounded-xl border border-white/30 bg-white/5 p-4 text-left">
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows={3}
+              placeholder="Type your message"
+              className="w-full bg-transparent border border-white/30 rounded-md px-3 py-2 text-sm text-white placeholder:text-white/60 focus:outline-none focus:border-white/70 resize-none"
+            />
+            <button
+              type="button"
+              onClick={handleWhatsApp}
+              className="mt-3 inline-flex items-center gap-2 bg-[#25D366] text-black font-bold text-xs tracking-[0.2em] uppercase px-6 py-3 rounded-md hover:brightness-110 transition-all"
+            >
+              Message on WhatsApp
+              <ArrowRight size={13} />
+            </button>
+          </div>
         </motion.div>
       </section>
     </main>

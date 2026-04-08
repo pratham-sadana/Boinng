@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search } from 'lucide-react';
@@ -40,6 +40,14 @@ export function Navbar() {
   const { openCart, items } = useCart();
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const uniqueNavLinks = useMemo(() => {
+    const seen = new Set<string>();
+    return navLinks.filter((link) => {
+      if (!link.href || seen.has(link.href)) return false;
+      seen.add(link.href);
+      return true;
+    });
+  }, [navLinks]);
 
   const handleNavigation = () => {
     window.scrollTo(0, 0);
@@ -178,13 +186,13 @@ export function Navbar() {
             ))}
 
             {/* Divider */}
-            {navLinks.length > 0 && (
+            {uniqueNavLinks.length > 0 && (
               <li aria-hidden="true" className="w-px h-4 bg-black/10 mx-1" />
             )}
 
             {/* Dynamic Shopify menu links */}
-            {navLinks.map((l) => (
-              <li key={l.href}>
+            {uniqueNavLinks.map((l, index) => (
+              <li key={`${l.href}-${index}`}>
                 <Link
                   href={l.href}
                   onClick={handleNavigation}
@@ -276,7 +284,7 @@ export function Navbar() {
         </div>
       </motion.nav>
 
-      <MobileMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} navLinks={navLinks} />
+      <MobileMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} navLinks={uniqueNavLinks} />
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       <CartPanel />
     </>

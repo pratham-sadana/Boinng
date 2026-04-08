@@ -9,8 +9,8 @@ interface FeaturedCollectionsProps {
   excludeHandles?: string[];
 }
 
-const TARGET_COLLECTION_HANDLES = ['crew-length', 'ankle-length', 'solids'];
-const TARGET_COLLECTION_TITLES = ['crew length', 'ankle length', 'solids'];
+const TARGET_COLLECTION_HANDLES = ['crew', 'ankle-length', 'solids'];
+const TARGET_COLLECTION_TITLES = ['crew', 'ankle length', 'solids'];
 
 function normalizeText(value: string): string {
   return value.toLowerCase().replace(/[-_]/g, ' ').trim();

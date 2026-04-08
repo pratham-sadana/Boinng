@@ -24,9 +24,16 @@ const LINKS = {
 
 export function Footer() {
   const [email, setEmail] = useState('');
+  const [bulkMessage, setBulkMessage] = useState('I want to do a bulk order');
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleBulkWhatsApp = () => {
+    const message = bulkMessage.trim() || 'I want to do a bulk order';
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=919021695191&text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,38 +177,63 @@ export function Footer() {
           {/* Spacer */}
           <div className="hidden md:block md:col-span-1" />
 
-          {/* Links — 3 cols each */}
-          {Object.entries(LINKS).map(([group, items]) => (
-            <div key={group} className="pl-10 md:col-span-2 flex flex-col gap-6 relative">
-              <h3 className="font-display text-xs font-bold uppercase tracking-[0.2em] text-boinng-yellow">
-                {group}
-              </h3>
-              <ul className="flex flex-col gap-4">
-                {items.map(link => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-xs font-medium tracking-widest uppercase text-white/75 hover:text-white hover:translate-x-1 inline-block transition-all duration-200"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-
-          {/* Payment / Trust badges col */}
-          <div className="md:col-span-1 flex flex-col gap-6">
-            <h3 className="font-display text-xs font-bold uppercase tracking-[0.2em] text-boinng-yellow">
-              We Accept
-            </h3>
-            <div className="flex flex-col gap-2">
-              {['UPI', 'Cards'].map(method => (
-                <span key={method} className="text-xs font-bold uppercase tracking-widest text-white/80 border border-white/30 px-3 py-1.5 w-fit">
-                  {method}
-                </span>
+          {/* Right side: lists + bulk order box */}
+          <div className="md:col-span-7 md:col-start-6 flex flex-col gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 md:gap-6">
+              {Object.entries(LINKS).map(([group, items]) => (
+                <div key={group} className="flex flex-col gap-6 relative">
+                  <h3 className="font-display text-xs font-bold uppercase tracking-[0.2em] text-boinng-yellow">
+                    {group}
+                  </h3>
+                  <ul className="flex flex-col gap-4">
+                    {items.map(link => (
+                      <li key={link.href}>
+                        <Link
+                          href={link.href}
+                          className="text-xs font-medium tracking-widest uppercase text-white/75 hover:text-white hover:translate-x-1 inline-block transition-all duration-200"
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
+
+              <div className="flex flex-col gap-6">
+                <h3 className="font-display text-xs font-bold uppercase tracking-[0.2em] text-boinng-yellow">
+                  We Accept
+                </h3>
+                <div className="flex flex-col gap-2">
+                  {['UPI', 'Cards'].map(method => (
+                    <span key={method} className="text-xs font-bold uppercase tracking-widest text-white/80 border border-white/30 px-3 py-1.5 w-fit">
+                      {method}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-white/25 px-4 py-4 bg-white/[0.02]">
+              <p className="text-[11px] font-bold tracking-wider text-white/85 mb-2 uppercase">
+                Bulk orders on WhatsApp
+              </p>
+              <div className="flex flex-col md:flex-row gap-2 md:items-end">
+                <textarea
+                  value={bulkMessage}
+                  onChange={(e) => setBulkMessage(e.target.value)}
+                  rows={2}
+                  placeholder="Type your bulk order message"
+                  className="w-full bg-transparent border border-white/20 rounded-md px-3 py-2 text-xs text-white placeholder:text-white/45 focus:outline-none focus:border-white/50 resize-none"
+                />
+                <button
+                  type="button"
+                  onClick={handleBulkWhatsApp}
+                  className="w-full md:w-auto md:shrink-0 md:px-6 py-2.5 text-xs font-bold uppercase tracking-widest rounded-md bg-[#25D366] text-black hover:brightness-110 transition-all"
+                >
+                  Message on WhatsApp
+                </button>
+              </div>
             </div>
           </div>
 
