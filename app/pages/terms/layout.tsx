@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | BOINNG! Streetwear',
-  description: 'BOINNG! Terms of Service. Please read our terms before shopping.',
+  title: 'Terms of Service | BOINNG! Quirky Socks',
+  description: 'BOINNG! Terms of Service for shopping our quirky socks online.',
   alternates: {
-    canonical: 'https://boinng.com/pages/terms',
+    canonical: 'https://boinng.in/pages/terms',
   },
   robots: {
     index: true,

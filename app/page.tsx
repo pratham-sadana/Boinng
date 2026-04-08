@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic';
 import Script from 'next/script';
+import type { Metadata } from 'next';
 import { Hero }             from '@/components/home/Hero';
 import { Marquee }          from '@/components/layout/Marquee';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
@@ -32,6 +33,26 @@ const BOTTOM_MARQUEE_FALLBACK = [
   'MAKE IT BOINNG!',
   'STREETWEAR FIRST',
 ];
+
+export const metadata: Metadata = {
+  title: 'BOINNG! | Quirky Socks For Everyday Style',
+  description: 'Shop quirky socks from BOINNG! Discover bold, comfy, and expressive socks made for everyday looks.',
+  alternates: {
+    canonical: 'https://boinng.in/',
+  },
+  openGraph: {
+    title: 'BOINNG! | Quirky Socks For Everyday Style',
+    description: 'Discover quirky socks from BOINNG! Bold designs and premium comfort in every pair.',
+    url: 'https://boinng.in/',
+    siteName: 'BOINNG!',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'BOINNG! | Quirky Socks For Everyday Style',
+    description: 'Discover quirky socks from BOINNG! Bold designs and premium comfort in every pair.',
+  },
+};
 
 export default async function HomePage() {
   const [topMarqueeItems, bottomMarqueeItems] = await Promise.all([

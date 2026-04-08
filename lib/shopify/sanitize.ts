@@ -98,6 +98,7 @@ export function createProductSchema(product: {
   const schema = {
     '@context': 'https://schema.org/',
     '@type': 'Product',
+    '@id': `https://boinng.in/products/${product.handle}#product`,
     name: product.title,
     description: stripHtmlTags(product.description),
     image: (product.images || [])
@@ -109,14 +110,15 @@ export function createProductSchema(product: {
     },
     offers: {
       '@type': 'Offer',
-      url: `https://boinng.com/products/${product.handle}`,
+      url: `https://boinng.in/products/${product.handle}`,
       priceCurrency: product.currency || 'INR',
       price: String(product.price).replace(/[^0-9.]/g, ''),
       availability: product.availableForSale
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
+      itemCondition: 'https://schema.org/NewCondition',
     },
-    url: `https://boinng.com/products/${product.handle}`,
+    url: `https://boinng.in/products/${product.handle}`,
   };
 
   return createSafeJsonLd(schema);
@@ -129,19 +131,22 @@ export function createOrganizationSchema(): string {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
+    '@id': 'https://boinng.in/#organization',
     name: 'BOINNG!',
-    url: 'https://boinng.com',
-    logo: 'https://boinng.com/logos/cropped.png',
-    description: "BOINNG! is India's boldest streetwear brand. Limited drops, premium quality, zero compromise.",
+    url: 'https://boinng.in',
+    logo: 'https://boinng.in/logos/cropped.png',
+    description: "BOINNG! is India's quirky socks brand with bold designs and all-day comfort.",
     sameAs: [
-      'https://instagram.com/boinng',
-      'https://twitter.com/boinng',
-      'https://facebook.com/boinng',
+      'https://instagram.com/boinng_',
     ],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'Customer Service',
-      url: 'https://boinng.com/pages/contact',
+      telephone: '+91 9021695191',
+      email: 'boinng.in@gmail.com',
+      areaServed: 'IN',
+      availableLanguage: ['en'],
+      url: 'https://boinng.in/pages/contact',
     },
   };
 

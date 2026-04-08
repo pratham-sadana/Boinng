@@ -9,8 +9,8 @@ export async function generateMetadata({ params }: { params: Promise<{ handle?: 
   const baseUrl = 'https://boinng.in';
   if (!resolvedParams.handle) {
     return {
-      title: 'Socks Category | BOINNG!',
-      description: 'Browse quirky sock categories at BOINNG!.',
+      title: 'Socks Collection | BOINNG!',
+      description: 'Browse quirky sock collections at BOINNG!.',
       alternates: {
         canonical: `${baseUrl}/categories`,
       },
@@ -21,25 +21,14 @@ export async function generateMetadata({ params }: { params: Promise<{ handle?: 
   
   return {
     title: `${title} Socks | BOINNG!`,
-    description: `Shop ${title.toLowerCase()} socks at BOINNG! Quirky styles and premium comfort in every pair.`,
+    description: `Shop ${title.toLowerCase()} socks at BOINNG!`,
     alternates: {
       canonical: `${baseUrl}/categories/${resolvedParams.handle}`,
-    },
-    openGraph: {
-      title: `${title} Socks | BOINNG!`,
-      description: `Shop ${title.toLowerCase()} socks at BOINNG!`,
-      url: `${baseUrl}/categories/${resolvedParams.handle}`,
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${title} Socks | BOINNG!`,
-      description: `Shop ${title.toLowerCase()} socks at BOINNG!`,
     },
   };
 }
 
-export default async function CategoryPage({ params }: { params: Promise<{ handle?: string }> }) {
+export default async function CollectionPage({ params }: { params: Promise<{ handle?: string }> }) {
   const resolvedParams = await params;
   if (!resolvedParams.handle) {
     notFound();
@@ -49,7 +38,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ handl
   try {
     products = await getCollectionProducts(resolvedParams.handle, 24);
   } catch (error) {
-    console.error('CategoryPage error:', error);
+    console.error('CollectionPage error:', error);
     throw error; // Let error boundary handle it
   }
 
@@ -57,13 +46,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ handl
 
   return (
     <div className="">
-      <FeaturedProductsContent
-        title={title}
-        products={products}
-        layout="grid"
-        showShopAll={false}
-        enableFiltersAndSort
-      />
+      <FeaturedProductsContent title={title} products={products} layout="grid" showShopAll={false} />
     </div>
   );
 }

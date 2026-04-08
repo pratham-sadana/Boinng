@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Shipping Information | BOINNG! Streetwear',
-  description: 'BOINNG! Shipping Information. Fast delivery across India with tracking.',
+  title: 'Shipping Information | BOINNG! Quirky Socks',
+  description: 'Shipping information for BOINNG! quirky socks. Fast delivery across India with tracking.',
   alternates: {
-    canonical: 'https://boinng.com/pages/shipping',
+    canonical: 'https://boinng.in/pages/shipping',
   },
   robots: {
     index: true,

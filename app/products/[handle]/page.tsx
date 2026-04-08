@@ -10,15 +10,21 @@ export const revalidate = 60;
 export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }) {
   const resolvedParams = await params;
   const product = await getProduct(resolvedParams.handle);
+  const productUrl = `https://boinng.in/products/${resolvedParams.handle}`;
 
   if (!product) return { title: 'Product Not Found' };
 
   return {
-    title: `${product.title} | BOINNG!`,
-    description: product.description,
+    title: `${product.title} Socks | BOINNG!`,
+    description: product.description || `Shop ${product.title} socks from BOINNG!`,
+    alternates: {
+      canonical: productUrl,
+    },
     openGraph: {
-      title: product.title,
-      description: product.description,
+      title: `${product.title} Socks | BOINNG!`,
+      description: product.description || `Shop ${product.title} socks from BOINNG!`,
+      url: productUrl,
+      type: 'website',
       images: [
         {
           url: product.featuredImage?.url || '',
@@ -26,6 +32,15 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
           height: product.featuredImage?.height || 600,
         },
       ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${product.title} Socks | BOINNG!`,
+      description: product.description || `Shop ${product.title} socks from BOINNG!`,
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
   };
 }

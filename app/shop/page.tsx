@@ -6,7 +6,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Shop All Products | BOINNG! - Quirky Socks',
-  description: 'You can never socks enough.',
+  description: 'Shop all quirky socks from BOINNG! Fun designs, premium comfort, and socks for every mood.',
   alternates: {
     canonical: 'https://boinng.in/shop',
   },

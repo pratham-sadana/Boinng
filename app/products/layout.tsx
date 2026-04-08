@@ -12,15 +12,15 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
     .join(' ');
 
   return {
-    title: `${formattedTitle} | BOINNG! Streetwear`,
-    description: `Shop ${formattedTitle} from BOINNG! - India's boldest streetwear brand. Premium quality, limited drops, bold designs.`,
-    keywords: ['streetwear', 'BOINNG', 'fashion', formattedTitle.toLowerCase(), 'shop'],
+    title: `${formattedTitle} Socks | BOINNG!`,
+    description: `Shop ${formattedTitle.toLowerCase()} socks from BOINNG! India's quirky socks brand with bold designs and all-day comfort.`,
+    keywords: ['quirky socks', 'BOINNG', 'socks', formattedTitle.toLowerCase(), 'shop socks'],
     alternates: {
       canonical: `${baseUrl}/products/${handle}`,
     },
     openGraph: {
-      title: `${formattedTitle} | BOINNG!`,
-      description: `Shop ${formattedTitle} from BOINNG!`,
+      title: `${formattedTitle} Socks | BOINNG!`,
+      description: `Shop ${formattedTitle.toLowerCase()} socks from BOINNG!`,
       type: 'website',
       url: `${baseUrl}/products/${handle}`,
     },

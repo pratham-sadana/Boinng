@@ -2,16 +2,17 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /.next/
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /*?*
 
-# Collections and Products - Allow crawling
-Allow: /collections/
+# Categories and products - allow crawling
 Allow: /products/
+Allow: /categories/
+Allow: /shop/
 
 # Static pages
 Allow: /pages/
 
 # Sitemaps
-Sitemap: https://boinng.com/sitemap.xml
-
-# Crawl delay (be respectful to server resources)
-Crawl-delay: 1
+Sitemap: https://boinng.in/sitemap.xml

@@ -3,7 +3,7 @@ import { Mail, Phone, MapPin } from 'lucide-react';
 
 export const metadata = {
   title: 'Contact Us | BOINNG!',
-  description: 'Get in touch with the BOINNG! team. We\'re here to help with any questions about our socks.',
+  description: 'Get in touch with the BOINNG! team for anything about our quirky socks, orders, and support.',
 };
 
 export default function ContactPage() {

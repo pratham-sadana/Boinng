@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Contact Us | BOINNG! Streetwear',
-  description: 'Get in touch with BOINNG!. We\'d love to hear from you about our streetwear collections.',
+  title: 'Contact Us | BOINNG! Quirky Socks',
+  description: 'Get in touch with BOINNG! for help with orders, sizing, or anything about our quirky socks.',
   alternates: {
-    canonical: 'https://boinng.com/pages/contact',
+    canonical: 'https://boinng.in/pages/contact',
   },
   robots: {
     index: true,

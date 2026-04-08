@@ -6,9 +6,9 @@ import { Navbar }          from '@/components/layout/Navbar';
 import { Footer }          from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
-  title: 'BOINNG! — Bold Streetwear',
-  description: 'BOINNG! is India\'s boldest streetwear brand. Limited drops, premium quality, zero compromise.',
-  keywords: ['streetwear', 'BOINNG', 'India', 'fashion', 'streetstyle', 'bold fashion', 'Indian streetwear'],
+  title: 'BOINNG! — Quirky Socks Brand',
+  description: 'BOINNG! is India\'s quirky socks brand. Bold designs, comfy fits, and limited drops for everyday style.',
+  keywords: ['quirky socks', 'BOINNG', 'socks', 'India', 'fun socks', 'statement socks', 'sock brand'],
   authors: [{ name: 'BOINNG!' }],
   creator: 'BOINNG!',
   publisher: 'BOINNG!',
@@ -17,9 +17,9 @@ export const metadata: Metadata = {
     telephone: false,
   },
   alternates: {
-    canonical: 'https://boinng.com',
+    canonical: 'https://boinng.in',
   },
-  metadataBase: new URL('https://boinng.com'),
+  metadataBase: new URL('https://boinng.in'),
   robots: {
     index: true,
     follow: true,
@@ -32,17 +32,17 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'BOINNG! — Bold Streetwear',
-    description: 'Limited drops. Premium quality. Zero compromise.',
+    title: 'BOINNG! - Quirky Socks Brand',
+    description: 'India\'s quirky socks brand for bold everyday looks.',
     type: 'website',
-    url: 'https://boinng.com',
+    url: 'https://boinng.in',
     siteName: 'BOINNG!',
     locale: 'en_IN',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'BOINNG! — Bold Streetwear',
-    description: 'India\'s boldest streetwear brand',
+    title: 'BOINNG! - Quirky Socks Brand',
+    description: 'India\'s quirky socks brand for bold everyday looks.',
   },
 };
 

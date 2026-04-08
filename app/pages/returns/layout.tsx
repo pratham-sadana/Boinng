@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Returns & Refunds | BOINNG! Streetwear',
-  description: 'BOINNG! Returns & Refunds Policy. Easy 60-day returns on all orders.',
+  title: 'Returns & Refunds | BOINNG! Quirky Socks',
+  description: 'Returns and refunds policy for BOINNG! quirky socks orders.',
   alternates: {
-    canonical: 'https://boinng.com/pages/returns',
+    canonical: 'https://boinng.in/pages/returns',
   },
   robots: {
     index: true,
