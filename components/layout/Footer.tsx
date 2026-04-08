@@ -7,10 +7,10 @@ import { useState } from 'react';
 const LINKS = {
   COLLECTIONS: [
     { label: 'All Products', href: '/shop' },
-    { label: 'All Collections', href: '/collections' },
-    { label: 'New Arrivals', href: '/collections/new-arrivals' },
-    { label: 'Best Sellers', href: '/collections/best-sellers' },
-    { label: 'Sale', href: '/collections/sale' },
+    { label: 'All Categories', href: '/categories' },
+    { label: 'New Arrivals', href: '/categories/new-arrivals' },
+    { label: 'Best Sellers', href: '/categories/best-sellers' },
+    { label: 'Sale', href: '/categories/sale' },
   ],
   INFORMATION: [
     { label: 'About Us', href: '/pages/about' },

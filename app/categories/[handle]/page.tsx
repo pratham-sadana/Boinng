@@ -8,8 +8,8 @@ export async function generateMetadata({ params }: { params: Promise<{ handle?: 
   const resolvedParams = await params;
   if (!resolvedParams.handle) {
     return {
-      title: 'Collection | BOINNG!',
-      description: 'Browse our collection at BOINNG!',
+      title: 'Category | BOINNG!',
+      description: 'Browse our categories at BOINNG!',
     };
   }
   
@@ -17,11 +17,11 @@ export async function generateMetadata({ params }: { params: Promise<{ handle?: 
   
   return {
     title: `${title} | BOINNG!`,
-    description: `Shop the ${title} collection at BOINNG!`,
+    description: `Shop the ${title} category at BOINNG!`,
   };
 }
 
-export default async function CollectionPage({ params }: { params: Promise<{ handle?: string }> }) {
+export default async function CategoryPage({ params }: { params: Promise<{ handle?: string }> }) {
   const resolvedParams = await params;
   if (!resolvedParams.handle) {
     notFound();
@@ -31,7 +31,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ han
   try {
     products = await getCollectionProducts(resolvedParams.handle, 24);
   } catch (error) {
-    console.error('CollectionPage error:', error);
+    console.error('CategoryPage error:', error);
     throw error; // Let error boundary handle it
   }
 

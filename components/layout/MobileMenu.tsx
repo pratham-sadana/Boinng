@@ -55,8 +55,8 @@ export function MobileMenu({ isOpen, onClose, navLinks }: MobileMenuProps) {
             <nav className="flex flex-col gap-6">
               {/* Permanent links */}
               {[
-                { label: 'All Socks',       href: '/collections/all' },
-                { label: 'All Collections', href: '/collections' },
+                { label: 'All Socks',       href: '/categories/all' },
+                { label: 'All Categories', href: '/categories' },
               ].map((link) => (
                 <Link
                   key={link.href}
@@ -86,7 +86,7 @@ export function MobileMenu({ isOpen, onClose, navLinks }: MobileMenuProps) {
 
             <div className="mt-auto pt-6 border-t border-black/10">
               <Link
-                href="/collections/all"
+                href="/categories/all"
                 onClick={handleNavigation}
                 className="block w-full bg-boinng-blue text-white text-center py-3 rounded-full font-bold uppercase tracking-widest"
               >

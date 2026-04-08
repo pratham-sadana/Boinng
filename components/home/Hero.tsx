@@ -53,7 +53,7 @@ export function Hero() {
           </motion.a>
 
           <motion.a
-            href="/collections/best-sellers"
+            href="/categories/best-sellers"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="w-6/12 sm:w-auto text-center inline-block px-5 py-2 sm:py-3 bg-black bg-opacity-25 text-white font-bold tracking-widest uppercase rounded-full text-xs sm:text-sm shadow-lg hover:shadow-xl transition-shadow border border-white/50"

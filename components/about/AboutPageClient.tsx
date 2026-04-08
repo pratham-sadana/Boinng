@@ -344,7 +344,7 @@ function CtaSection() {
           Your feet have been patient long enough. New drop every Friday.
         </p>
         <Link
-          href="/collections/all"
+          href="/categories/all"
           className="group inline-flex items-center gap-2 bg-white text-boinng-blue font-bold text-xs tracking-[0.2em] uppercase px-8 py-4 rounded-full hover:bg-boinng-black hover:text-white transition-all duration-300 shadow-xl"
         >
           Shop all socks

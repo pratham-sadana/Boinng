@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
-  const handle = resolvedParams?.handle || 'collection';
+  const handle = resolvedParams?.handle || 'category';
   const baseUrl = 'https://boinng.in';
   
   // Format handle to title (best-sellers -> Best Sellers)
@@ -13,16 +13,16 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
 
   return {
     title: `${formattedTitle} | BOINNG! Streetwear`,
-    description: `Explore our ${formattedTitle.toLowerCase()} collection. Premium streetwear from BOINNG! - Limited drops, bold designs, zero compromise.`,
-    keywords: ['streetwear', 'BOINNG', 'collection', formattedTitle.toLowerCase()],
+    description: `Explore our ${formattedTitle.toLowerCase()} category. Premium streetwear from BOINNG! - Limited drops, bold designs, zero compromise.`,
+    keywords: ['streetwear', 'BOINNG', 'category', formattedTitle.toLowerCase()],
     alternates: {
-      canonical: `${baseUrl}/collections/${handle}`,
+      canonical: `${baseUrl}/categories/${handle}`,
     },
     openGraph: {
       title: `${formattedTitle} | BOINNG!`,
-      description: `Check out our ${formattedTitle.toLowerCase()} collection`,
+      description: `Check out our ${formattedTitle.toLowerCase()} category`,
       type: 'website',
-      url: `${baseUrl}/collections/${handle}`,
+      url: `${baseUrl}/categories/${handle}`,
     },
     robots: {
       index: true,
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
   };
 }
 
-export default function CollectionLayout({
+export default function CategoryLayout({
   children,
 }: {
   children: React.ReactNode;

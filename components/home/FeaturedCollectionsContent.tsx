@@ -15,7 +15,7 @@ interface FeaturedCollectionsContentProps {
 }
 
 export function FeaturedCollectionsContent({
-  title = 'FEATURED COLLECTIONS',
+  title = 'FEATURED CATEGORIES',
   collections,
 }: FeaturedCollectionsContentProps) {
   const ref    = useRef(null);
@@ -44,7 +44,7 @@ export function FeaturedCollectionsContent({
             {title}
           </h2>
           <Link
-            href="/collections/all"
+            href="/categories/all"
             className="group flex items-center gap-1 font-bold text-[10px] tracking-[0.2em] uppercase text-boinng-black hover:text-boinng-blue transition-colors duration-200"
           >
             View All
@@ -87,7 +87,7 @@ function CollectionCard({
       transition={{ delay: index * 0.07, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       className={isHero ? 'col-span-2 md:col-span-1' : ''}
     >
-      <Link href={`/collections/${collection.handle}`} className="block h-full">
+      <Link href={`/categories/${collection.handle}`} className="block h-full">
         <div className="group relative rounded-2xl overflow-hidden cursor-pointer h-full min-h-[200px] md:min-h-[280px]">
 
           {/* Background image or gradient */}

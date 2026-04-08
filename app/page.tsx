@@ -55,11 +55,11 @@ export default async function HomePage() {
 
       {/* 1. Hero — first impression, scroll-scrub video */}
       <Hero />
-
+      <FinalCTA />
       {/* 2. Energy burst immediately after hero — keeps momentum */}
-      <Marquee speed={130} items={topItems} />
+      {/* <Marquee speed={130} items={topItems} /> */}
 
-      <FeaturedCollections limit={6} />
+      {/* <FeaturedCollections limit={6} /> */}
       
       {/* 3. Best Sellers — product discovery #1 priority, hottest items first */}
       <FeaturedProducts
@@ -74,10 +74,10 @@ export default async function HomePage() {
         collectionHandle="new-arrivals"
         limit={8}
       />
-      <FinalCTA />
+     
       {/* 6. Why BOINNG! — builds trust before asking for the sale */}
 
-      <FeaturedCollections
+      {/* <FeaturedCollections
         limit={6}
         mode="all"
         excludeHandles={[
@@ -88,11 +88,11 @@ export default async function HomePage() {
           'crew-length',
           'solids',
         ]}
-      />
+      /> */}
       <Features />
 
       {/* 7. Brand story — who we are, why it matters */}
-      <BrandStory />
+      {/* <BrandStory /> */}
 
       {/* 8. Dark marquee — palette break, keeps energy up */}
       <Marquee

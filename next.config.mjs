@@ -14,6 +14,20 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/collections',
+        destination: '/categories',
+        permanent: true,
+      },
+      {
+        source: '/collections/:handle',
+        destination: '/categories/:handle',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

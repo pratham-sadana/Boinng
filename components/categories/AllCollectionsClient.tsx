@@ -41,7 +41,7 @@ export function AllCollectionsClient({ collections }: AllCollectionsClientProps)
             Browse everything
           </p>
           <h1 className="font-display text-[clamp(2.5rem,8vw,5.5rem)] uppercase tracking-widest text-white leading-tight mb-3">
-            All Collections
+            All Categories
           </h1>
           <p className="text-white/45 text-sm max-w-sm mx-auto leading-relaxed">
             Every drop, every theme, every excuse to wear wild socks.
@@ -53,7 +53,7 @@ export function AllCollectionsClient({ collections }: AllCollectionsClientProps)
       <section ref={ref} className="max-w-[1400px] mx-auto px-4 md:px-10 py-14 md:py-20">
         {visible.length === 0 ? (
           <p className="text-center text-black/40 font-bold tracking-widest uppercase text-sm py-20">
-            No collections found.
+            No categories found.
           </p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
@@ -89,7 +89,7 @@ function CollectionCard({
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ delay: index * 0.06, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
     >
-      <Link href={`/collections/${collection.handle}`} className="block h-full">
+      <Link href={`/categories/${collection.handle}`} className="block h-full">
         <div className="group relative rounded-2xl overflow-hidden cursor-pointer h-full min-h-[200px] md:min-h-[280px]">
 
           {/* Background image or fallback gradient */}

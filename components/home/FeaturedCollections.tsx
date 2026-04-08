@@ -21,7 +21,7 @@ function isCollectionPreview(value: CollectionPreview | undefined): value is Col
 }
 
 export async function FeaturedCollections({
-  title = 'FEATURED COLLECTIONS',
+  title = 'FEATURED CATEGORIES',
   limit = 6,
   mode = 'curated',
   excludeHandles = [],

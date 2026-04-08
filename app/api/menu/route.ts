@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
 /**
  * Transform Shopify store URLs to relative paths
  * Examples:
- * - https://yourstore.myshopify.com/collections/new-arrivals → /collections/new-arrivals
+ * - https://yourstore.myshopify.com/collections/new-arrivals -> /categories/new-arrivals
  * - https://yourstore.myshopify.com/pages/about → /pages/about
  */
 function transformUrl(url: string): string {
@@ -94,10 +94,10 @@ function transformUrl(url: string): string {
 
   try {
     const urlObj = new URL(url);
-    // Remove the domain and keep just the path
-    return urlObj.pathname;
+    // Keep relative path and remap Shopify collections URLs to app categories URLs.
+    return urlObj.pathname.replace(/^\/collections(?=\/|$)/, '/categories');
   } catch {
     // If URL parsing fails, assume it's already a relative path
-    return url;
+    return url.replace(/^\/collections(?=\/|$)/, '/categories');
   }
 }

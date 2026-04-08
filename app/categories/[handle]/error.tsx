@@ -11,14 +11,14 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('Collection page error:', error);
+    console.error('Category page error:', error);
   }, [error]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-boinng-bg">
       <div className="text-center">
         <h1 className="font-display text-6xl mb-4 text-boinng-black">Oops!</h1>
-        <p className="text-xl text-black/60 mb-4">Failed to load collection</p>
+        <p className="text-xl text-black/60 mb-4">Failed to load category</p>
         <p className="text-sm text-black/40 mb-8 max-w-md">{error.message || 'Something went wrong. Please try again.'}</p>
         <div className="flex gap-4 justify-center">
           <button

@@ -12,7 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0 
     },
     { 
-      url: `${baseUrl}/collections`, 
+      url: `${baseUrl}/categories`, 
       lastModified: new Date(), 
       changeFrequency: 'weekly',
       priority: 0.9 
@@ -73,7 +73,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         dynamicPages = [
           ...dynamicPages,
           ...collections.map((collection: any) => ({
-            url: `${baseUrl}/collections/${collection.handle}`,
+            url: `${baseUrl}/categories/${collection.handle}`,
             lastModified: new Date(),
             changeFrequency: 'weekly' as const,
             priority: 0.8,

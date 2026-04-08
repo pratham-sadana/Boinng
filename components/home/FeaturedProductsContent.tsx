@@ -260,7 +260,7 @@ export function FeaturedProductsContent({
 
             {showShopAll && (
               <Link
-                href="/collections"
+                href="/categories"
                 className="group flex items-center gap-1 font-bold text-[10px] tracking-[0.2em] uppercase text-boinng-black hover:text-boinng-blue transition-colors duration-200 ml-1"
               >
                 Shop All

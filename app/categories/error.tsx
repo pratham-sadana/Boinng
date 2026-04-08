@@ -2,22 +2,22 @@
 
 import Link from 'next/link';
 
-export default function CollectionError({
+export default function CategoryError({
   error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  console.error('Collection page error:', error);
+  console.error('Category page error:', error);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-boinng-bg px-4">
       <div className="text-center max-w-md">
         <h1 className="font-display text-6xl mb-4 text-boinng-black">⚠️</h1>
-        <h2 className="text-2xl font-bold mb-2 text-boinng-black">Collection Not Found</h2>
+        <h2 className="text-2xl font-bold mb-2 text-boinng-black">Category Not Found</h2>
         <p className="text-black/60 mb-8">
-          The collection you're looking for doesn't exist or there was an issue loading it.
+          The category you're looking for doesn't exist or there was an issue loading it.
         </p>
 
         <div className="flex gap-4 flex-col sm:flex-row justify-center">

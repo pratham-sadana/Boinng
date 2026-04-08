@@ -15,17 +15,17 @@ interface NavLink {
 }
 
 const FALLBACK_NAV_LINKS: NavLink[] = [
-  { label: 'New Arrivals', href: '/collections/new-arrivals' },
-  { label: 'Best Sellers', href: '/collections/best-sellers' },
-  { label: 'Sale',         href: '/collections/sale' },
-  { label: 'Valentines',   href: '/collections/valentines' },
+  { label: 'New Arrivals', href: '/categories/new-arrivals' },
+  { label: 'Best Sellers', href: '/categories/best-sellers' },
+  { label: 'Sale',         href: '/categories/sale' },
+  { label: 'Valentines',   href: '/categories/valentines' },
 ];
 
 const FALLBACK_ANNOUNCEMENTS = [
-  '🎉 Free shipping over ₹799',
-  '✨ New drops every Friday',
-  '🇮🇳 Proudly made in India',
-  '🛍️ Easy returns within 7 days',
+  'Free shipping over Rs 799',
+  'New drops every Friday',
+  'Proudly made in India',
+  'Easy returns within 7 days',
 ];
 
 export function Navbar() {
@@ -156,7 +156,7 @@ export function Navbar() {
             {/* Permanent links — always visible */}
             {[
               { label: 'All',       href: '/shop' },
-              { label: 'Collections', href: '/collections' },
+              { label: 'Categories', href: '/categories' },
             ].map((l) => (
               <li key={l.href}>
                 <Link
