@@ -46,6 +46,9 @@ export function FinalCTA() {
               <img
                 src="/logos/bg-logo.png"
                 alt="Background"
+                width={200}
+                height={200}
+                loading="lazy"
                 className="w-full h-full object-contain"
               />
             </motion.div>

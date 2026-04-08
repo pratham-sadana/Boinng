@@ -3,11 +3,11 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { formatMoney } from '@/lib/utils';
 import { transformProduct } from '@/lib/shopify/api';
 import { useCart } from '@/lib/cart/context';
-import { ShoppingBag, Check } from 'lucide-react';
+import { ShoppingBag, Check, Filter, ArrowUpDown, RotateCcw, Search } from 'lucide-react';
 
 import type { Product } from '@/lib/shopify/types';
 
@@ -22,6 +22,125 @@ interface AllProductsClientProps {
 }
 
 export function AllProductsClient({ products }: AllProductsClientProps) {
+  const [query, setQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'name-asc' | 'name-desc'>('featured');
+  const [availability, setAvailability] = useState<'all' | 'in-stock' | 'out-of-stock'>('all');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [maxPrice, setMaxPrice] = useState<string>('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [showSort, setShowSort] = useState(false);
+  const controlRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (!controlRef.current) return;
+      if (!controlRef.current.contains(event.target as Node)) {
+        setShowFilters(false);
+        setShowSort(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
+
+  const productMeta = useMemo(() => {
+    return products.map((product, idx) => {
+      const transformed = transformProduct(product);
+      const price = Number.parseFloat(transformed.price || '0');
+      return {
+        product,
+        transformed,
+        price: Number.isFinite(price) ? price : 0,
+        index: idx,
+      };
+    });
+  }, [products]);
+
+  const availableTags = useMemo(() => {
+    const counts = new Map<string, number>();
+    productMeta.forEach(({ transformed }) => {
+      transformed.tags.forEach((tag) => {
+        const normalized = tag.trim().toLowerCase();
+        if (!normalized) return;
+        counts.set(normalized, (counts.get(normalized) || 0) + 1);
+      });
+    });
+
+    return Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([tag]) => tag);
+  }, [productMeta]);
+
+  const filteredProducts = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    const parsedMaxPrice = Number.parseFloat(maxPrice);
+
+    const filtered = productMeta.filter(({ product, transformed, price }) => {
+      if (normalizedQuery && !transformed.title.toLowerCase().includes(normalizedQuery)) {
+        return false;
+      }
+
+      if (availability === 'in-stock' && !product.availableForSale) {
+        return false;
+      }
+
+      if (availability === 'out-of-stock' && product.availableForSale) {
+        return false;
+      }
+
+      if (selectedTags.length > 0) {
+        const tags = transformed.tags.map((tag) => tag.toLowerCase());
+        const hasAnySelectedTag = selectedTags.some((tag) => tags.includes(tag));
+        if (!hasAnySelectedTag) {
+          return false;
+        }
+      }
+
+      if (Number.isFinite(parsedMaxPrice) && parsedMaxPrice > 0 && price > parsedMaxPrice) {
+        return false;
+      }
+
+      return true;
+    });
+
+    const sorted = [...filtered];
+    if (sortBy === 'price-asc') {
+      sorted.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price-desc') {
+      sorted.sort((a, b) => b.price - a.price);
+    } else if (sortBy === 'name-asc') {
+      sorted.sort((a, b) => a.transformed.title.localeCompare(b.transformed.title));
+    } else if (sortBy === 'name-desc') {
+      sorted.sort((a, b) => b.transformed.title.localeCompare(a.transformed.title));
+    }
+
+    return sorted;
+  }, [availability, maxPrice, productMeta, query, selectedTags, sortBy]);
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
+
+  const resetFilters = () => {
+    setQuery('');
+    setSortBy('featured');
+    setAvailability('all');
+    setSelectedTags([]);
+    setMaxPrice('');
+  };
+
+  const sortLabels: Record<typeof sortBy, string> = {
+    featured: 'Featured',
+    'price-asc': 'Price: Low to High',
+    'price-desc': 'Price: High to Low',
+    'name-asc': 'Name: A to Z',
+    'name-desc': 'Name: Z to A',
+  };
+
   if (!products || products.length === 0) {
     return (
       <div className="py-24 px-4 md:px-8 max-w-7xl mx-auto text-center">
@@ -32,16 +151,154 @@ export function AllProductsClient({ products }: AllProductsClientProps) {
 
   return (
     <section className="py-2 px-4 md:px-8 max-w-7xl mx-auto">
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <p className="text-xs md:text-sm font-bold uppercase tracking-widest text-black/50 pt-2">
+          Showing {filteredProducts.length} of {products.length}
+        </p>
+
+        <div ref={controlRef} className="relative ml-auto flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setShowSort((prev) => !prev);
+              setShowFilters(false);
+            }}
+            className="inline-flex items-center gap-2 rounded-full border border-black/15 bg-white px-3 py-2 text-xs font-bold uppercase tracking-widest text-black/75 hover:border-boinng-blue hover:text-boinng-blue transition-colors"
+            aria-label="Open sort options"
+          >
+            <ArrowUpDown size={14} />
+            <span className="hidden sm:inline">{sortLabels[sortBy]}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setShowFilters((prev) => !prev);
+              setShowSort(false);
+            }}
+            className="inline-flex items-center gap-2 rounded-full border border-black/15 bg-white px-3 py-2 text-xs font-bold uppercase tracking-widest text-black/75 hover:border-boinng-blue hover:text-boinng-blue transition-colors"
+            aria-label="Open filters"
+          >
+            <Filter size={14} />
+            <span className="hidden sm:inline">Filters</span>
+          </button>
+
+          {(query || availability !== 'all' || selectedTags.length > 0 || maxPrice) && (
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="inline-flex items-center gap-1 rounded-full border border-black/15 bg-white px-3 py-2 text-xs font-bold uppercase tracking-widest text-black/65 hover:border-red-400 hover:text-red-500 transition-colors"
+              aria-label="Reset filters"
+            >
+              <RotateCcw size={13} />
+              <span className="hidden sm:inline">Reset</span>
+            </button>
+          )}
+
+          {showSort && (
+            <div className="absolute right-0 top-12 z-30 w-64 rounded-2xl border border-black/10 bg-white p-2 shadow-xl shadow-black/10">
+              {(
+                [
+                  ['featured', 'Featured'],
+                  ['price-asc', 'Price: Low to High'],
+                  ['price-desc', 'Price: High to Low'],
+                  ['name-asc', 'Name: A to Z'],
+                  ['name-desc', 'Name: Z to A'],
+                ] as Array<[typeof sortBy, string]>
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => {
+                    setSortBy(value);
+                    setShowSort(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-colors ${
+                    sortBy === value ? 'bg-boinng-blue text-white' : 'text-black/70 hover:bg-black/5'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {showFilters && (
+            <div className="absolute right-0 top-12 z-30 w-[min(92vw,360px)] rounded-2xl border border-black/10 bg-white p-4 shadow-xl shadow-black/10">
+              <div className="space-y-3">
+                <div className="relative">
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/40" />
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search products"
+                    className="w-full rounded-xl border border-black/15 pl-9 pr-3 py-2.5 text-sm font-medium focus:outline-none focus:border-boinng-blue"
+                  />
+                </div>
+
+                <select
+                  value={availability}
+                  onChange={(e) => setAvailability(e.target.value as 'all' | 'in-stock' | 'out-of-stock')}
+                  className="w-full rounded-xl border border-black/15 px-3 py-2.5 text-sm font-medium bg-white focus:outline-none focus:border-boinng-blue"
+                >
+                  <option value="all">Availability: All</option>
+                  <option value="in-stock">In stock</option>
+                  <option value="out-of-stock">Out of stock</option>
+                </select>
+
+                <input
+                  type="number"
+                  min={0}
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  placeholder="Max price (INR)"
+                  className="w-full rounded-xl border border-black/15 px-3 py-2.5 text-sm font-medium focus:outline-none focus:border-boinng-blue"
+                />
+
+                {availableTags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto pr-1">
+                    {availableTags.map((tag) => {
+                      const active = selectedTags.includes(tag);
+                      return (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => toggleTag(tag)}
+                          className={`px-2.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-colors ${
+                            active
+                              ? 'bg-boinng-blue text-white border-boinng-blue'
+                              : 'bg-transparent text-black/70 border-black/20 hover:border-boinng-blue hover:text-boinng-blue'
+                          }`}
+                        >
+                          {tag}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
         className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4"
       >
-        {products.map((product, index) => (
+        {filteredProducts.map(({ product }, index) => (
           <ProductCard key={product.handle} product={product} index={index} />
         ))}
       </motion.div>
+
+      {filteredProducts.length === 0 && (
+        <div className="py-16 text-center">
+          <p className="text-black/55 text-lg font-semibold">No products match these filters.</p>
+        </div>
+      )}
     </section>
   );
 }
@@ -56,23 +313,11 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
   const [isAdding,          setIsAdding]          = useState(false);
   const [addedSuccess,      setAddedSuccess]      = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [imagesReady,       setImagesReady]       = useState(false);
+  const [loadedImages,      setLoadedImages]      = useState<Record<number, boolean>>({});
 
   const allImages = transformed.images?.length > 0
     ? transformed.images
     : (transformed.image ? [transformed.image] : []);
-
-  // Preload all images on mount — no blank flash on hover
-  useEffect(() => {
-    if (allImages.length <= 1) { setImagesReady(true); return; }
-    let loaded = 0;
-    allImages.forEach((img) => {
-      if (!img?.url) { loaded++; if (loaded === allImages.length) setImagesReady(true); return; }
-      const el = new window.Image();
-      el.onload = el.onerror = () => { loaded++; if (loaded === allImages.length) setImagesReady(true); };
-      el.src = img.url;
-    });
-  }, []);
 
   let badge = '';
   if (product.tags?.includes('new'))       badge = 'NEW';
@@ -108,12 +353,16 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
     >
       <div
         className="group relative flex flex-col rounded-2xl overflow-hidden bg-white border border-black/[0.07] h-full transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-black/10 cursor-pointer"
-        onMouseEnter={() => imagesReady && allImages.length > 1 && setCurrentImageIndex(1)}
+        onMouseEnter={() => allImages.length > 1 && setCurrentImageIndex(1)}
         onMouseLeave={() => setCurrentImageIndex(0)}
       >
         {/* Image */}
         <div className="relative aspect-[3/4] overflow-hidden bg-black/[0.03]">
           <Link href={`/products/${product.handle}`} className="absolute inset-0 z-10" aria-label={transformed.title} />
+
+          {allImages[currentImageIndex]?.url && !loadedImages[currentImageIndex] && (
+            <div className="absolute inset-0 z-[5] animate-pulse bg-gradient-to-br from-black/[0.06] via-black/[0.03] to-black/[0.06]" />
+          )}
 
           {allImages[0]?.url ? (
             <>
@@ -121,9 +370,9 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
                 src={allImages[0].url}
                 alt={allImages[0].alt || product.title}
                 fill
-                loading="eager"
                 priority={index < 3}
                 className="object-cover group-hover:scale-[1.05]"
+                onLoad={() => setLoadedImages((prev) => ({ ...prev, 0: true }))}
                 style={{ opacity: currentImageIndex === 0 ? 1 : 0, transition: 'opacity 0.5s ease, transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94)' }}
                 sizes="220px"
               />
@@ -132,8 +381,9 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
                   src={allImages[1].url}
                   alt={allImages[1].alt || product.title}
                   fill
-                  loading="eager"
+                  loading="lazy"
                   className="object-cover group-hover:scale-[1.05]"
+                  onLoad={() => setLoadedImages((prev) => ({ ...prev, 1: true }))}
                   style={{ opacity: currentImageIndex === 1 ? 1 : 0, transition: 'opacity 0.5s ease, transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94)' }}
                   sizes="220px"
                 />

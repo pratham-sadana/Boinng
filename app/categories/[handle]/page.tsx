@@ -39,7 +39,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ handl
 
   return (
     <div className="">
-      <FeaturedProductsContent title={title} products={products} layout="grid" showShopAll={false} />
+      <FeaturedProductsContent
+        title={title}
+        products={products}
+        layout="grid"
+        showShopAll={false}
+        enableFiltersAndSort
+      />
     </div>
   );
 }

@@ -119,7 +119,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                   className="flex-1 bg-transparent text-lg font-semibold placeholder:text-black/40 focus:outline-none"
                 />
                 {isLoading && <Loader size={24} className="animate-spin text-boinng-blue" />}
-                <button onClick={onClose} className="p-2 hover:bg-black/5 rounded-full transition-colors">
+                <button onClick={onClose} className="p-2 hover:bg-black/5 rounded-full transition-colors" aria-label="Close search">
                   <X size={24} />
                 </button>
               </div>

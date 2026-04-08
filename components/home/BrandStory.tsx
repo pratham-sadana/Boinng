@@ -2,8 +2,6 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 
 export function BrandStory() {
   const ref    = useRef(null);
@@ -76,10 +74,12 @@ export function BrandStory() {
                 loop
                 muted
                 playsInline
-                preload="metadata"
+                preload="none"
+                aria-label="Decorative brand story video"
                 className="w-full h-full object-cover opacity-90"
               >
                 <source src="/hero1.mp4" type="video/mp4" />
+                <track kind="captions" srcLang="en" label="English" src="/captions/decorative.vtt" default />
               </video>
             </div>
             {/* <div className="rounded-2xl border border-black/10 bg-white/85 backdrop-blur px-5 py-4 mt-4 lg:mt-0 lg:absolute lg:left-4 lg:right-4 lg:bottom-4">

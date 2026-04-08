@@ -34,9 +34,7 @@ export function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [activeLink, setActiveLink] = useState<string | null>(null);
   const [navLinks, setNavLinks] = useState<NavLink[]>(FALLBACK_NAV_LINKS);
-  const [isLoadingMenu, setIsLoadingMenu] = useState(true);
   const [announcements, setAnnouncements] = useState<string[]>(FALLBACK_ANNOUNCEMENTS);
-  const [announcementIndex, setAnnouncementIndex] = useState(0);
   const { openCart, items } = useCart();
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -69,15 +67,6 @@ export function Navbar() {
     fetchAnnouncements();
   }, []);
 
-  // Rotate announcements every 5 seconds
-  useEffect(() => {
-    if (announcements.length <= 1) return;
-    const interval = setInterval(() => {
-      setAnnouncementIndex((prev) => (prev + 1) % announcements.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [announcements]);
-
   // Fetch dynamic menu from Shopify
   useEffect(() => {
     const fetchMenu = async () => {
@@ -91,8 +80,6 @@ export function Navbar() {
         }
       } catch (error) {
         console.warn('Failed to fetch dynamic menu, using fallback:', error);
-      } finally {
-        setIsLoadingMenu(false);
       }
     };
     fetchMenu();
@@ -114,18 +101,9 @@ export function Navbar() {
         className="bg-boinng-blue text-[#FFFEFA] overflow-hidden"
       >
         <div className="relative flex items-center justify-center py-2 px-4 h-7 overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={announcementIndex}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.35, ease: 'easeInOut' }}
-              className="absolute text-[10px] font-bold tracking-[0.25em] uppercase text-center whitespace-nowrap"
-            >
-              {announcements[announcementIndex]}
-            </motion.p>
-          </AnimatePresence>
+          <p className="absolute text-[10px] font-bold tracking-[0.25em] uppercase text-center whitespace-nowrap">
+            {announcements[0]}
+          </p>
         </div>
       </motion.div>
 
@@ -153,6 +131,8 @@ export function Navbar() {
               <img
                 src="/logos/blue-text.png"
                 alt="BOINNG!"
+                width={180}
+                height={32}
                 className="h-7 md:h-8 w-auto object-contain"
               />
             </motion.div>

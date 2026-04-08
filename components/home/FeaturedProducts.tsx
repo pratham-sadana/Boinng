@@ -6,6 +6,7 @@ interface FeaturedProductsProps {
   collectionHandle?: string;
   limit?: number;
   excludeHandle?: string;
+  prioritizeImages?: boolean;
 }
 
 export async function FeaturedProducts({
@@ -13,6 +14,7 @@ export async function FeaturedProducts({
   collectionHandle = 'best-sellers',
   limit = 4,
   excludeHandle,
+  prioritizeImages = false,
 }: FeaturedProductsProps) {
   const handle = collectionHandle || 'best-sellers';
 
@@ -24,5 +26,5 @@ export async function FeaturedProducts({
     ? products.filter((p) => p.handle !== excludeHandle).slice(0, limit)
     : products;
 
-  return <FeaturedProductsContent title={title} products={filtered} />;
+  return <FeaturedProductsContent title={title} products={filtered} prioritizeImages={prioritizeImages} />;
 }

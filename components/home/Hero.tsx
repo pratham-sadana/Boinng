@@ -13,15 +13,18 @@ export function Hero() {
           <div className="absolute inset-0 bg-gradient-to-br from-boinng-black via-boinng-blue/60 to-boinng-black" />
         </div>
 
-        {/* Video */}
-        <motion.video
+        {/* Video (desktop only to avoid slow mobile LCP) */}
+        <video
           src="/hero.mp4"
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0 opacity-80"
-        />
+          preload="none"
+          aria-label="Decorative background video"
+          className="hidden md:block absolute inset-0 w-full h-full object-cover z-0 opacity-80"
+        >
+        </video>
 
         {/* Overlay */}
         <div

@@ -26,16 +26,16 @@ export default function ContactPage() {
           <div className="p-8 border border-black/10 rounded-2xl bg-boinng-bg">
             <Mail className="w-8 h-8 text-boinng-blue mb-4" />
             <h3 className="font-display text-lg font-bold uppercase tracking-wider mb-2">Email Us</h3>
-            <a href="mailto:support@boinng.co" className="text-boinng-blue hover:underline">
-              support@boinng.co
+            <a href="mailto:boinng.in@gmail.com" className="text-boinng-blue hover:underline">
+              boinng.in@gmail.com
             </a>
           </div>
 
           <div className="p-8 border border-black/10 rounded-2xl bg-boinng-bg">
             <Phone className="w-8 h-8 text-boinng-blue mb-4" />
             <h3 className="font-display text-lg font-bold uppercase tracking-wider mb-2">Call Us</h3>
-            <a href="tel:+919876543210" className="text-boinng-blue hover:underline">
-              +91 9876 543 210
+            <a href="tel:+919021695191" className="text-boinng-blue hover:underline">
+                +91 9021695191
             </a>
           </div>
 

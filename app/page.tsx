@@ -60,6 +60,7 @@ export default async function HomePage() {
         title="Everyone’s obsessed with these"
         collectionHandle="best-sellers"
         limit={8}
+        prioritizeImages
       />
       <FinalCTA />
       
@@ -72,6 +73,7 @@ export default async function HomePage() {
         title="NEW ARRIVALS"
         collectionHandle="new-arrivals"
         limit={8}
+        prioritizeImages={false}
       />
      
       {/* 6. Why BOINNG! — builds trust before asking for the sale */}
@@ -94,11 +96,13 @@ export default async function HomePage() {
       {/* <BrandStory /> */}
 
       {/* 8. Dark marquee — palette break, keeps energy up */}
-      <Marquee
-        speed={70}
-        white
-        items={bottomItems}
-      />
+      <div className="hidden md:block">
+        <Marquee
+          speed={70}
+          white
+          items={bottomItems}
+        />
+      </div>
 
       {/* 9. Social proof — Instagram + testimonials together for max credibility */}
       <InstagramFeed />

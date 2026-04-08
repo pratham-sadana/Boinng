@@ -26,6 +26,12 @@ interface MenuResponse {
  */
 
 const MENU_HANDLE = 'main-nav'; // Set this to your Shopify menu handle
+const FALLBACK_MENU_ITEMS = [
+  { label: 'New Arrivals', href: '/categories/new-arrivals', submenu: [] },
+  { label: 'Best Sellers', href: '/categories/best-sellers', submenu: [] },
+  { label: 'Sale', href: '/categories/sale', submenu: [] },
+  { label: 'All Categories', href: '/categories', submenu: [] },
+];
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,11 +45,20 @@ export async function GET(request: NextRequest) {
 
     if (!response.menu) {
       return NextResponse.json(
-        { 
-          menu: null,
-          message: `Menu "${MENU_HANDLE}" not found. Create it in Shopify Admin → Settings → Menus`,
+        {
+          menu: {
+            title: 'Fallback Menu',
+            items: FALLBACK_MENU_ITEMS,
+          },
+          source: 'fallback',
+          message: `Menu "${MENU_HANDLE}" not found. Using fallback navigation.`,
         },
-        { status: 404 }
+        {
+          status: 200,
+          headers: {
+            'Cache-Control': 'public, max-age=300, stale-while-revalidate=60',
+          },
+        }
       );
     }
 
@@ -66,7 +81,7 @@ export async function GET(request: NextRequest) {
       },
       {
         headers: {
-          'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+          'Cache-Control': 'public, max-age=3600, stale-while-revalidate=300',
         },
       }
     );
@@ -74,11 +89,19 @@ export async function GET(request: NextRequest) {
     console.error('Menu fetch error:', error);
     return NextResponse.json(
       {
-        menu: null,
-        error: 'Failed to fetch menu',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        menu: {
+          title: 'Fallback Menu',
+          items: FALLBACK_MENU_ITEMS,
+        },
+        source: 'fallback',
+        error: 'Shopify unavailable, using fallback menu',
       },
-      { status: 500 }
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'public, max-age=120, stale-while-revalidate=60',
+        },
+      }
     );
   }
 }

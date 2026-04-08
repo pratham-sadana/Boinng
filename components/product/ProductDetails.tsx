@@ -17,6 +17,7 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
   const [isZooming, setIsZooming] = useState(false);
   const [cursorSide, setCursorSide] = useState<'left' | 'right' | null>(null);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
+  const [mainImageLoaded, setMainImageLoaded] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
 
   const displayImages = selectedVariant?.image
@@ -34,6 +35,10 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
   const currentImage = displayImages[selectedImageIndex];
 
   useEffect(() => { setIsClient(true); }, []);
+
+  useEffect(() => {
+    setMainImageLoaded(false);
+  }, [currentImage?.url]);
 
   const handleVariantChange = (variant: typeof product.variants[0]) => {
     setSelectedVariant(variant);
@@ -127,13 +132,14 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
                   onClick={() => setSelectedImageIndex(index)}
                   whileHover={{ scale: 1.06 }}
                   whileTap={{ scale: 0.94 }}
+                  aria-label={`View image ${index + 1}`}
                   className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all duration-200 ${
                     selectedImageIndex === index
                       ? 'border-boinng-blue shadow-md ring-2 ring-boinng-blue/20'
                       : 'border-black/10 hover:border-black/25 opacity-60 hover:opacity-100'
                   }`}
                 >
-                  <img src={image.url} alt={image.alt} className="w-full h-full object-cover" />
+                  <img src={image.url} alt={image.alt} width={96} height={96} loading="lazy" className="w-full h-full object-cover" />
                 </motion.button>
               ))}
             </motion.div>
@@ -165,12 +171,19 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
               e.clientX - rect.left < rect.width / 2 ? handlePrevImage() : handleNextImage();
             }}
           >
+            {!mainImageLoaded && (
+              <div className="absolute inset-0 z-[5] animate-pulse bg-gradient-to-br from-black/[0.06] via-black/[0.03] to-black/[0.06]" />
+            )}
+
             <AnimatePresence mode="wait">
               <motion.img
                 key={currentImage?.url || 'fallback'}
                 src={currentImage?.url || product.image?.url || '/logos/cropped.png'}
                 alt={currentImage?.alt || product.title}
+                width={currentImage?.width || 1200}
+                height={currentImage?.height || 1200}
                 className="w-full h-full object-cover"
+                onLoad={() => setMainImageLoaded(true)}
                 initial={{ opacity: 0, scale: 1.03 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.97 }}
@@ -199,6 +212,7 @@ export function ProductDetails({ product }: { product: TransformedProduct }) {
                   <button
                     key={i}
                     onClick={(e) => { e.stopPropagation(); setSelectedImageIndex(i); }}
+                    aria-label={`Go to image ${i + 1}`}
                     className={`h-1.5 rounded-full transition-all duration-300 ${
                       i === selectedImageIndex ? 'w-5 bg-boinng-blue' : 'w-1.5 bg-black/30'
                     }`}

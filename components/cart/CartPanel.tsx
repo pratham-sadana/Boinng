@@ -91,7 +91,7 @@ export function CartPanel() {
           >
             <div className="flex items-center justify-between p-6 border-b border-black/10">
               <h2 className="font-display text-2xl uppercase tracking-widest">Your Cart ({items.length})</h2>
-              <button onClick={closeCart} className="p-2">
+              <button onClick={closeCart} className="p-2" aria-label="Close cart">
                 <X size={24} />
               </button>
             </div>
@@ -100,7 +100,7 @@ export function CartPanel() {
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {items.map(item => (
                   <div key={item.id} className="flex gap-4 p-4 bg-black/2 rounded-lg">
-                    <img src={item.image} alt={item.title} className="w-20 h-20 object-cover rounded-md" />
+                    <img src={item.image} alt={item.title} width={80} height={80} loading="lazy" className="w-20 h-20 object-cover rounded-md" />
                     <div className="flex-1 flex flex-col justify-between">
                       <div>
                         <h3 className="font-bold text-sm">{item.title}</h3>
@@ -112,6 +112,7 @@ export function CartPanel() {
                         <button
                           onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                           disabled={isLoading}
+                          aria-label={item.quantity === 1 ? 'Remove item from cart' : 'Decrease quantity'}
                           className="w-8 h-8 flex items-center justify-center rounded border border-black/20 hover:border-boinng-blue hover:bg-boinng-blue/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                           title={item.quantity === 1 ? 'Remove from cart' : 'Decrease quantity'}
                         >
@@ -121,6 +122,7 @@ export function CartPanel() {
                         <button
                           onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                           disabled={isLoading}
+                          aria-label="Increase quantity"
                           className="w-8 h-8 flex items-center justify-center rounded border border-black/20 hover:border-boinng-blue hover:bg-boinng-blue/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                         >
                           <Plus size={14} />
@@ -132,6 +134,7 @@ export function CartPanel() {
                       onClick={() => handleRemove(item.id)} 
                       className="text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       disabled={isLoading}
+                      aria-label="Remove item"
                       title="Remove from cart"
                     >
                       <X size={18} />

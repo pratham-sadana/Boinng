@@ -26,6 +26,12 @@ interface MenuResponse {
  */
 
 const MENU_HANDLE = 'announcements';
+const FALLBACK_ANNOUNCEMENTS = [
+  'Free shipping over Rs 799',
+  'New drops every Friday',
+  'Proudly made in India',
+  'Easy returns within 7 days',
+];
 
 export async function GET(request: NextRequest) {
   try {
@@ -40,10 +46,16 @@ export async function GET(request: NextRequest) {
     if (!response.menu) {
       return NextResponse.json(
         {
-          announcements: null,
-          message: `Menu "${MENU_HANDLE}" not found. Create it in Shopify Admin → Online Store → Navigation`,
+          announcements: FALLBACK_ANNOUNCEMENTS,
+          source: 'fallback',
+          message: `Menu "${MENU_HANDLE}" not found. Using fallback announcements.`,
         },
-        { status: 404 }
+        {
+          status: 200,
+          headers: {
+            'Cache-Control': 'public, max-age=300, stale-while-revalidate=60',
+          },
+        }
       );
     }
 
@@ -54,7 +66,7 @@ export async function GET(request: NextRequest) {
       { announcements },
       {
         headers: {
-          'Cache-Control': 'public, max-age=3600',
+          'Cache-Control': 'public, max-age=3600, stale-while-revalidate=300',
         },
       }
     );
@@ -62,11 +74,16 @@ export async function GET(request: NextRequest) {
     console.error('Announcements fetch error:', error);
     return NextResponse.json(
       {
-        announcements: null,
-        error: 'Failed to fetch announcements',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        announcements: FALLBACK_ANNOUNCEMENTS,
+        source: 'fallback',
+        error: 'Shopify unavailable, using fallback announcements',
       },
-      { status: 500 }
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'public, max-age=120, stale-while-revalidate=60',
+        },
+      }
     );
   }
 }

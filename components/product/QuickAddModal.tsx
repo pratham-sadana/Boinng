@@ -62,7 +62,7 @@ export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) 
             >
               <div className="flex shrink-0 items-center justify-between p-4 md:p-6 border-b border-black/10">
                 <h2 className="font-display text-2xl uppercase tracking-widest">Quick Add</h2>
-                <button onClick={onClose} className="p-2 hover:bg-black/5 rounded-full transition-colors">
+                <button onClick={onClose} className="p-2 hover:bg-black/5 rounded-full transition-colors" aria-label="Close quick add modal">
                   <X size={24} />
                 </button>
               </div>
@@ -74,6 +74,9 @@ export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) 
                     key={selectedVariant.image?.url || product.image?.url}
                     src={selectedVariant.image?.url || product.image?.url || '/logos/cropped.png'}
                     alt={product.title}
+                    width={640}
+                    height={640}
+                    loading="lazy"
                     className="w-full h-48 md:h-64 object-cover rounded-xl"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -84,6 +87,9 @@ export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) 
                   <img
                     src={product.image?.url || '/logos/cropped.png'}
                     alt={product.title}
+                    width={640}
+                    height={640}
+                    loading="lazy"
                     className="w-full h-48 md:h-64 object-cover rounded-xl"
                   />
                 )}
